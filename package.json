@@ -404,9 +404,12 @@
             },
             {
                 "command": "gitstash.applySingle",
-                "title": "Stage changes",
+                "title": "Apply changes",
                 "category": "GitStash",
-                "icon": "$(add)"
+                "icon": {
+                    "light": "resources/icons/light/stash-pop.svg",
+                    "dark": "resources/icons/dark/stash-pop.svg"
+                }
             },
             {
                 "command": "gitstash.createSingle",

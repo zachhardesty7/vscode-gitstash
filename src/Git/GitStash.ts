@@ -387,12 +387,33 @@ export default class GitStash extends Git {
      */
     public applySingle(cwd: string, index: number, subPath: string) {
         const params = [
-            'checkout',
+            'diff',
+            `stash@{${index}}^1`,
             `stash@{${index}}`,
+            '--',
             subPath,
+            '|',
+            // REVIEW:
+            // better bc it uses fuzzing and easier to read error in notif
+            'patch',
+            '-p1',
+            // '--backup-if-mismatch', // REVIEW: backups not done by git by default, but `--backup-if-mismatch` shows up for failed or fuzzed hunks
+            '-V none', // REVIEW: comment above & uncomment this to disable backup files
+            // vs
+            // prettier
+            // 'git',
+            // 'apply',
+            // '--reject',
         ]
 
-        return this.exec(params, cwd)
+        // FIXME: not a command
+        // const params = [
+        //     'stash-apply-file',
+        //     'fileNode.parent.index',
+        //     'fileNode.name',
+        // ]
+
+        return this.exec(params, cwd, undefined, undefined, { usePipe: true })
     }
 
     /**

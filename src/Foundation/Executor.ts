@@ -41,9 +41,17 @@ export class ExeResult {
 export function exec(
     command: string,
     args: string[],
-    cwd?: string,
-    env?: Record<string, string | undefined>,
-    encoding?: BufferEncoding,
+    {
+        cwd,
+        env,
+        encoding,
+        usePipe = false,
+    }: {
+        cwd?: string
+        env?: Record<string, string | undefined>
+        encoding?: BufferEncoding
+        usePipe?: boolean
+    } = {},
 ): Execution {
     const outBuffer: Buffer[] = []
     const errBuffer: Buffer[] = []
@@ -52,7 +60,14 @@ export function exec(
     encoding ??= 'utf8'
 
     const startTime = performance.now()
-    const cmd = spawn(command, args, { cwd, env })
+    // FIXME: solve pipe issue for new `applySingle()`
+    // https://stackoverflow.com/questions/28968662/using-a-pipe-character-with-child-process-spawn
+    // https://stackoverflow.com/questions/38273253/using-two-commands-using-pipe-with-spawn/39482486#39482486
+    // REVIEW: Invalid time value
+    // const cmd = spawn('sh', ['-c', [command, ...args].join(' ')], { cwd, env })
+    const cmd = usePipe
+        ? spawn('sh', ['-c', [command, ...args].join(' ')], { cwd, env })
+        : spawn(command, args, { cwd, env })
 
     return {
         args,

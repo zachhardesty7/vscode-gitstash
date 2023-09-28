@@ -27,8 +27,9 @@ export default class Git {
         cwd?: string,
         env?: Record<string, string | undefined>,
         encoding?: BufferEncoding,
+        { usePipe = false }: { usePipe?: boolean } = {},
     ): Execution {
-        const ex = exec('git', args, cwd, env, encoding)
+        const ex = exec('git', args, { cwd, env, encoding, usePipe })
         if (this.callback) { this.callback(ex) }
         return ex
     }

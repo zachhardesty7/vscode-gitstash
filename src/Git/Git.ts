@@ -10,7 +10,12 @@ export default class extends Executor {
      * @param cwd      the string with the current working directory
      * @param encoding the BufferEncoding string with the optional encoding to replace utf8
      */
-    public async exec(args: string[], cwd: string, encoding?: BufferEncoding): Promise<string> {
-        return this.call('git', args, cwd, encoding)
+    public async exec(
+        args: string[],
+        cwd: string,
+        encoding?: BufferEncoding,
+        { usePipe = false }: { usePipe?: boolean } = {},
+    ): Promise<string> {
+        return this.call('git', args, { cwd, encoding, usePipe })
     }
 }

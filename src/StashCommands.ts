@@ -171,12 +171,52 @@ export class StashCommands {
      */
     public applySingle = (fileNode: StashNode): void => {
         const params = [
-            'checkout',
+            'diff',
+            `stash@{${fileNode.parent.index}}^1`,
             `stash@{${fileNode.parent.index}}`,
+            '--',
+            fileNode.name,
+            '|',
+            // REVIEW:
+            // better bc it uses fuzzing and easier to read error in notif
+            'patch',
+            '-p1',
+            // '--backup-if-mismatch', // REVIEW: backups not done by git by default, but `--backup-if-mismatch` shows up for failed or fuzzed hunks
+            '-V none', // REVIEW: comment above & uncomment this to disable backup files
+            // vs
+            // prettier
+            // 'git',
+            // 'apply',
+            // '--reject',
+        ]
+
+        this.exec(fileNode.parent.path, params, 'Changes from file applied', fileNode, {
+            usePipe: true,
+        })
+
+        // FIXME: not a command
+        // const params = [
+        //     'stash-apply-file',
+        //     'fileNode.parent.index',
+        //     'fileNode.name',
+        // ]
+
+        // this.exec(fileNode.parent.path, params, 'Changes from file applied', fileNode)
+    }
+
+    /**
+     * Restores a file with any changes.
+     */
+    public restoreSingle = (fileNode: StashNode): void => {
+        const params = [
+            'restore',
+            '--worktree',
+            `--source=stash@{${fileNode.parent.index}}`,
+            '--',
             fileNode.name,
         ]
 
-        this.exec(fileNode.parent.path, params, 'Changes from file applied', fileNode)
+        this.exec(fileNode.parent.path, params, 'File with changes restored', fileNode)
     }
 
     /**
@@ -200,8 +240,14 @@ export class StashCommands {
      * @param successMessage the string message to show on success
      * @param node           the involved node
      */
-    private exec(cwd: string, params: string[], successMessage: string, node?: StashNode): void {
-        this.stashGit.exec(params, cwd)
+    private exec(
+        cwd: string,
+        params: string[],
+        successMessage: string,
+        node?: StashNode,
+        { usePipe = false }: { usePipe?: boolean } = {},
+    ): void {
+        this.stashGit.exec(params, cwd, undefined, { usePipe })
             .then(
                 (result: string) => {
                     const issueType = this.findResultIssues(result)

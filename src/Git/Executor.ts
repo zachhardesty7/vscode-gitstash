@@ -10,11 +10,27 @@ export default class {
      * @param cwd      the string with the current working directory
      * @param encoding the BufferEncoding string with the optional encoding to replace utf8
      */
-    public async call(command: string, args: string[], cwd?: string, encoding?: BufferEncoding): Promise<string> {
+    public async call(
+        command: string,
+        args: string[],
+        {
+            cwd,
+            encoding,
+            usePipe = false,
+        }: { cwd?: string; encoding?: BufferEncoding; usePipe?: boolean } = {},
+    ): Promise<string> {
         const response: Buffer[] = []
         const errors: string[] = []
 
-        const cmd = spawn(command, args, { cwd })
+        // const cmd = spawn(command, args, { cwd })
+        // FIXME: solve pipe issue for new `applySingle()`
+        // https://stackoverflow.com/questions/28968662/using-a-pipe-character-with-child-process-spawn
+        // https://stackoverflow.com/questions/38273253/using-two-commands-using-pipe-with-spawn/39482486#39482486
+        // REVIEW: Invalid time value
+        // const cmd = spawn('sh', ['-c', [command, ...args].join(' ')], { cwd })
+        const cmd = usePipe
+            ? spawn('sh', ['-c', [command, ...args].join(' ')], { cwd })
+            : spawn(command, args, { cwd })
         cmd.stderr.setEncoding(encoding || 'utf8')
 
         return new Promise<string>((resolve, reject) => {

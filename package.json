@@ -124,19 +124,6 @@
                     "description": "Specifies the format for each stash tooltip \nAvailable tokens:\nSame than stash.labelContent",
                     "editPresentation": "multilineText"
                 },
-                "gitstash.explorer.items.stash.popAndApply": {
-                    "type": "string",
-                    "enum": [
-                        "pop",
-                        "apply"
-                    ],
-                    "enumDescriptions": [
-                        "Pop as button, apply as context option",
-                        "Apply as button, pop as context option"
-                    ],
-                    "default": "pop",
-                    "description": "Defines if pop or apply will be set as item button (and the secondary action as context menu option)"
-                },
                 "gitstash.explorer.items.stash.diffButton": {
                     "type": "string",
                     "enum": [
@@ -356,10 +343,7 @@
                 "command": "gitstash.apply",
                 "title": "Apply...",
                 "category": "GitStash",
-                "icon": {
-                    "light": "resources/icons/light/stash-pop.svg",
-                    "dark": "resources/icons/dark/stash-pop.svg"
-                }
+                "icon": "$(git-stash-apply)"
             },
             {
                 "command": "gitstash.drop",
@@ -406,10 +390,7 @@
                 "command": "gitstash.applySingle",
                 "title": "Apply changes",
                 "category": "GitStash",
-                "icon": {
-                    "light": "resources/icons/light/stash-pop.svg",
-                    "dark": "resources/icons/dark/stash-pop.svg"
-                }
+                "icon": "$(git-stash-apply)"
             },
             {
                 "command": "gitstash.createSingle",
@@ -646,28 +627,18 @@
                 },
                 {
                     "command": "gitstash.apply",
-                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.popAndApply == apply",
+                    "when": "view == gitstash.explorer && viewItem == stash",
                     "group": "inline@1"
                 },
                 {
                     "command": "gitstash.pop",
-                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.popAndApply == pop",
+                    "when": "view == gitstash.explorer && viewItem == stash",
                     "group": "inline@1"
                 },
                 {
                     "command": "gitstash.drop",
                     "when": "view == gitstash.explorer && viewItem == stash",
                     "group": "inline@2"
-                },
-                {
-                    "command": "gitstash.apply",
-                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.popAndApply != apply",
-                    "group": "menu_section_1@1"
-                },
-                {
-                    "command": "gitstash.pop",
-                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.popAndApply != pop",
-                    "group": "menu_section_1@1"
                 },
                 {
                     "command": "gitstash.branch",

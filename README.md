@@ -82,7 +82,6 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.explorer.items.stash.descriptionContent`        | Specifies the format for each stash description . Available tokens: Same than stash.labelContent |
 | `gitstash.explorer.items.stash.tooltipContent`            | Specifies the format for each stash tooltip . Available tokens: Same than stash.labelContent |
 | `gitstash.explorer.items.stash.to-clipboardContent`       | Specifies stash data to be set on clipboard. Available tokens: nSame than stash.labelContent |
-| `gitstash.explorer.items.stash.popAndApply`               | Defines if pop or apply will be set as item button (and the secondary action as context menu option) |
 | `gitstash.explorer.items.stash.diffButton`                | Defines which comparison to display from a file diff button |
 | `gitstash.explorer.items.file.decoration`                 | Adds decorations to the tree items |
 | `gitstash.explorer.items.file.icons`                      | Defines the icon to show on files |

@@ -73,7 +73,7 @@ export class StashCommands {
      * @param stashMessage an optional message to set on the stash
      */
     public push = (filePaths: string[], stashMessage?: string): void => {
-        const params = ['stash', 'push']
+        const params = ['stash', 'push', '--include-untracked']
 
         if (stashMessage) {
             params.push('-m', stashMessage)

@@ -290,6 +290,7 @@ export default class GitStash extends Git {
 
     /**
      * Stashes the specified files only.
+     * @FIXME: might also include staged files that aren't selected
      */
     public push(cwd: string, filePaths: string[], message?: string) {
         const params = [
@@ -384,6 +385,7 @@ export default class GitStash extends Git {
 
     /**
      * Applies changes from a file.
+     * @FIXME: fails when stash doesn't match index, need to stage changes first to get a merge conflict to show up
      */
     public applySingle(cwd: string, index: number, subPath: string) {
         const params = [
@@ -394,16 +396,18 @@ export default class GitStash extends Git {
             subPath,
             '|',
             // REVIEW:
-            // better bc it uses fuzzing and easier to read error in notif
-            'patch',
-            '-p1',
-            // '--backup-if-mismatch', // REVIEW: backups not done by git by default, but `--backup-if-mismatch` shows up for failed or fuzzed hunks
-            '-V none', // REVIEW: comment above & uncomment this to disable backup files
-            // vs
-            // prettier
-            // 'git',
-            // 'apply',
-            // '--reject',
+            // better bc it uses fuzzing and easier to read error in notif?
+            // 'patch',
+            // '-p1',
+            // '-V none', // REVIEW: comment above & uncomment this to disable backup files
+            // // '--backup-if-mismatch', // REVIEW: backups not done by git by default, but `--backup-if-mismatch` shows up for failed or fuzzed hunks
+
+            // vs (prettier and triggers a merge conflict after conflicting files are staged)
+
+            'git',
+            'apply',
+            '--3way', // trigger merge conflict
+            // '--reject', // prevents triggering merge conflict
         ]
 
         // FIXME: not a command

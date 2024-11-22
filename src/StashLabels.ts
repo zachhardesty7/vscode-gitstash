@@ -59,7 +59,7 @@ export default class {
             case NodeType.Repository:
                 return node.path
             case NodeType.Stash:
-                return node.name
+                return this.getStashDescription(node)
             case NodeType.Deleted:
             case NodeType.IndexAdded:
             case NodeType.Modified:

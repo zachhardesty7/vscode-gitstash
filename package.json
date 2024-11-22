@@ -589,6 +589,8 @@
         ]
     },
     "scripts": {
+        "_pack": "vsce package",
+        "pack": "npm run webpack && npm run _pack",
         "lint": "eslint -c .eslintrc.js --ext .ts ./src",
         "lint-fix": "npm run lint -- --fix",
         "vscode:prepublish": "webpack --mode development",

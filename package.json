@@ -34,7 +34,7 @@
     },
     "main": "./dist/extension",
     "activationEvents": [
-        "*"
+        "onStartupFinished"
     ],
     "capabilities": {
         "untrustedWorkspaces": {

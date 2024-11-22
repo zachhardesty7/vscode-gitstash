@@ -16,6 +16,8 @@ import TreeDecorationProvider from './Explorer/TreeDecorationProvider'
 import UriGenerator from './uriGenerator'
 import WorkspaceGit from './Git/WorkspaceGit'
 
+const DEBUG = process.env.DEBUG_EXTENSION === 'true'
+
 export function activate(context: ExtensionContext): void {
     const channelName = 'GitStash'
 
@@ -97,6 +99,10 @@ export function activate(context: ExtensionContext): void {
     )
 
     treeProvider.toggle()
+
+    if (DEBUG) {
+        void window.showInformationMessage('GitStash loaded')
+    }
 }
 
 /**

@@ -5,6 +5,9 @@
             "name": "Launch Git Stash",
             "type": "extensionHost",
             "request": "launch",
+            "env": {
+                "DEBUG_EXTENSION": "true"
+            },
             "runtimeExecutable": "${execPath}",
             "args": [ "--extensionDevelopmentPath=${workspaceFolder}" ],
             "cwd": "${workspaceFolder}",
@@ -17,6 +20,9 @@
             "name": "Watch and Launch Git Stash",
             "type": "extensionHost",
             "request": "launch",
+            "env": {
+                "DEBUG_EXTENSION": "true"
+            },
             "runtimeExecutable": "${execPath}",
             "args": [ "--extensionDevelopmentPath=${workspaceFolder}" ],
             "cwd": "${workspaceFolder}",

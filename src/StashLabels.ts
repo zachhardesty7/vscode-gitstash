@@ -64,7 +64,7 @@ export default class StashLabels {
             return node.path
         }
         if (node instanceof StashNode) {
-            return node.subject
+            return node.subject.substring(node.subject.indexOf(':') + 2)
         }
         if (node instanceof FileNode) {
             return node.path

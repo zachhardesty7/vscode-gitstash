@@ -9,3 +9,4 @@ tsconfig.json
 tslint.json
 tslint-prepublish.json
 webpack.config.js
+__NOTES.md

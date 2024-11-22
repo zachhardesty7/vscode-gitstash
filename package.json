@@ -768,6 +768,7 @@
         ]
     },
     "scripts": {
+        "pack": "vsce package",
         "init": "lefthook install",
         "lint": "eslint src",
         "lint-fix": "npm run lint -- --fix",

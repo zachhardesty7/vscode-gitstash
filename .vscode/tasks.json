@@ -10,7 +10,7 @@
             "group": "build",
             "problemMatcher": [
                 "$tsc",
-                "$tslint5"
+                // "$tslint5"
             ],
         },
         {
@@ -19,7 +19,7 @@
             "script": "lint",
             "group": "build",
             "problemMatcher": [
-                "$tslint5"
+                // "$tslint5"
             ]
         },
         {

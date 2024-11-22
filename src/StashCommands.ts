@@ -71,6 +71,7 @@ export class StashCommands {
      *
      * @param filePaths    an array with the list of the file paths to stash
      * @param stashMessage an optional message to set on the stash
+     * @FIXME: might also include staged files that aren't selected
      */
     public push = (filePaths: string[], stashMessage?: string): void => {
         const params = ['stash', 'push', '--include-untracked']
@@ -168,6 +169,7 @@ export class StashCommands {
 
     /**
      * Applies changes from a file.
+     * @FIXME: fails when stash doesn't match index, need to stage changes first to get a merge conflict to show up
      */
     public applySingle = (fileNode: StashNode): void => {
         const params = [
@@ -178,16 +180,18 @@ export class StashCommands {
             fileNode.name,
             '|',
             // REVIEW:
-            // better bc it uses fuzzing and easier to read error in notif
-            'patch',
-            '-p1',
-            // '--backup-if-mismatch', // REVIEW: backups not done by git by default, but `--backup-if-mismatch` shows up for failed or fuzzed hunks
-            '-V none', // REVIEW: comment above & uncomment this to disable backup files
-            // vs
-            // prettier
-            // 'git',
-            // 'apply',
-            // '--reject',
+            // better bc it uses fuzzing and easier to read error in notif?
+            // 'patch',
+            // '-p1',
+            // '-V none', // REVIEW: comment above & uncomment this to disable backup files
+            // // '--backup-if-mismatch', // REVIEW: backups not done by git by default, but `--backup-if-mismatch` shows up for failed or fuzzed hunks
+
+            // vs (prettier and triggers a merge conflict after conflicting files are staged)
+
+            'git',
+            'apply',
+            '--3way', // trigger merge conflict
+            // '--reject', // prevents triggering merge conflict
         ]
 
         this.exec(fileNode.parent.path, params, 'Changes from file applied', fileNode, {

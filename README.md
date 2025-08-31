@@ -5,10 +5,12 @@
 [![Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/arturock.gitstash?color=f2266e&label=VS%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
 [![Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/arturock.gitstash?color=f2266e)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
 [![Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/arturock.gitstash?color=f2266e)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
-
+<br>
 [![OpenVSX Version](https://img.shields.io/open-vsx/v/arturock/gitstash?color=c160ef&label=Open%20VSX)](https://open-vsx.org/extension/arturock/gitstash)
 [![OpenVSX Downloads](https://img.shields.io/open-vsx/dt/arturock/gitstash?color=c160ef)](https://open-vsx.org/extension/arturock/gitstash)
 [![OpenVSX rating](https://img.shields.io/open-vsx/stars/arturock/gitstash?color=c160ef)](https://open-vsx.org/extension/arturock/gitstash)
+<br>
+[![GitHub Release](https://img.shields.io/github/v/release/artrz/vsix-gitstash?color=08872B&label=GitHub%20Release)](https://github.com/artrz/vsix-gitstash/releases/latest)
 
 
 ## Features
@@ -40,6 +42,13 @@ You don't need to use the explorer buttons, just type `gitstash` in the command 
   - gitstash: Toggle explorer
 
 In a multi-root project, the git repository its automatically inferred from the current open document if there's one.
+
+
+### Install
+
+Find it on the marketplace, openVSX or in the GitHub releases page. Click on the badges at the top of this file for your preferred source.
+The GitHub release is  [automatically packaged](https://github.com/artrz/vsix-gitstash/actions) by a [GitHub Action](.github/workflows/release-to-github.yml).
+
 
 ### Screenshots
 

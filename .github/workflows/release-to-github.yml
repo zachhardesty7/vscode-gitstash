@@ -36,7 +36,7 @@ jobs:
         with:
           tag: ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Release ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           artifacts: ${{ env.EXT_GLOB_NAME }}
           artifactContentType: application/zip
           draft: false

@@ -693,7 +693,7 @@
         "vscode:prepublish": "npm run qa && npm run esbuild",
         "pub:bump": "vsce package && npx @favware/cliff-jumper",
         "pub:debump": "git reset --soft HEAD~1 ; git tag --delete",
-        "pub:release": "git push origin main && git push --tags && vsce publish && npx ovsx publish"
+        "pub:release": "git push origin main && git push --tags && vsce publish"
     },
     "dependencies": {
         "tmp": "0.2.4"

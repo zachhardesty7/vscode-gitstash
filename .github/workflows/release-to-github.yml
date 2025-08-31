@@ -6,7 +6,7 @@ on:
     - 'v*.*.*'
 
 env:
-  EXT_GNAME: gitstash-*.vsix
+  EXT_GLOB_NAME: gitstash-*.vsix
 
 jobs:
   release:
@@ -37,7 +37,7 @@ jobs:
           tag: ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Release ${{ github.ref_name }}
-          artifacts: $EXT_GNAME
+          artifacts: ${{ env.EXT_GLOB_NAME }}
           artifactContentType: application/zip
           draft: false
           prerelease: false

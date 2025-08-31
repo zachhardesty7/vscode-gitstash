@@ -3,7 +3,7 @@
     "gitRepo": "auto",
     "gitToken": "none",
     "install": true,
-    "name": "vscode-gitstash",
+    "name": "vsix-gitstash",
     "org": "artrz",
     "packagePath": ".",
     "tagTemplate": "v{{new-version}}",

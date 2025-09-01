@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.4.0] - 2025-09-01
+
+### Changed
+
+- Allow to list changes as tree (#127)
+- Use less data for stashes state hash
+
+### Fixed
+
+- Do not reject executions with code 0
+
+[https://github.com/artrz/vsx-gitstash/compare/v6.3.1..v6.4.0](https://github.com/artrz/vsx-gitstash/compare/v6.3.1..v6.4.0)
+
 ## [6.3.1] - 2025-08-31
 
 ### Fixed

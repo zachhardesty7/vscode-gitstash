@@ -39,10 +39,11 @@ export default class StashGit extends Git {
      *
      * @param cwd the current working directory
      */
-    public async getRawStash(cwd: string): Promise<null | string> {
+    public async getRawStashes(cwd: string): Promise<null | string> {
         const params = [
             'stash',
             'list',
+            '--format=%h',
         ]
 
         return (await this.exec(params, cwd)).trim() || null

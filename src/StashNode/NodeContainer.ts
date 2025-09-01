@@ -26,10 +26,10 @@ export default class NodeContainer {
     }
 
     /**
-     * Gets the stashes text-list md5 hash.
+     * Gets a hash string representing the current available stashes.
      */
-    public async getStashesMd5(cwd: string): Promise<string | undefined> {
-        return this.stashGit.getRawStash(cwd).then((rawStash: string | null) => {
+    public async getStateHash(cwd: string): Promise<string | undefined> {
+        return this.stashGit.getRawStashes(cwd).then((rawStash: string | null) => {
             return rawStash
                 ? createHash('md5').update(rawStash).digest('hex')
                 : undefined

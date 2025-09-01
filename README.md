@@ -46,8 +46,9 @@ In a multi-root project, the git repository its automatically inferred from the 
 
 ### Install
 
-Find it on the marketplace, openVSX or in the GitHub releases page. Click on the badges at the top of this file for your preferred source.
-The GitHub release is  [automatically packaged](https://github.com/artrz/vsix-gitstash/actions) by a [GitHub Action](.github/workflows/release-to-github.yml).
+Find it on the marketplace, openVSX registry or in the GitHub releases page.
+Click on the badges at the top of this file for your preferred source.
+The GitHub release is  [automatically generated](https://github.com/artrz/vsix-gitstash/actions) by a [GitHub Action](.github/workflows/release-to-github.yml).
 
 
 ### Screenshots

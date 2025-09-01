@@ -9,8 +9,9 @@ import {
     TreeItemCollapsibleState,
 } from 'vscode'
 import Config from '../Config'
+import DirectoryNode from './TreeNode/DirectoryNode'
 import FileNode from '../StashNode/FileNode'
-import MessageNode from '../StashNode/MessageNode'
+import MessageNode from './TreeNode/MessageNode'
 import Node from '../StashNode/Node'
 import RepositoryNode from '../StashNode/RepositoryNode'
 import StashLabels from '../StashLabels'
@@ -41,18 +42,23 @@ export default class {
         if (node instanceof StashNode) {
             return this.getStashItem(node)
         }
-        if (node instanceof MessageNode) {
-            return this.getMessageItem(node)
-        }
         if (node instanceof FileNode) {
             return this.getFileItem(node)
         }
+        if (node instanceof DirectoryNode) {
+            return this.geDirectoryItem(node)
+        }
+        if (node instanceof MessageNode) {
+            return this.getMessageItem(node)
+        }
 
-        throw new Error(`getTreeItem() Invalid node ${node.id}`)
+        console.error('TreeItemFactory.getTreeItem(): Invalid tree node. See the console for details.')
+        console.error(node)
+        throw new Error('TreeItemFactory.getTreeItem(): Invalid tree node. See the console for details.')
     }
 
     /**
-     * Generates an repository tree item.
+     * Generates a repository tree item.
      *
      * @param node the node to be used as base
      */
@@ -69,7 +75,7 @@ export default class {
     }
 
     /**
-     * Generates an stash tree item.
+     * Generates a stash tree item.
      *
      * @param node the node to be used as base
      */
@@ -86,7 +92,7 @@ export default class {
     }
 
     /**
-     * Generates a stashed file tree item.
+     * Generates a file tree item.
      *
      * @param node the node to be used as base
      */
@@ -114,6 +120,18 @@ export default class {
                 command: 'gitstash.show',
                 arguments: [node],
             },
+        }
+    }
+
+    private geDirectoryItem(node: DirectoryNode): TreeItem {
+        return {
+            id: node.name.replaceAll('[^a-z0-9]', '-'),
+            label: node.name,
+            description: undefined,
+            tooltip: undefined,
+            iconPath: ThemeIcon.Folder,
+            contextValue: 'directory',
+            collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
 

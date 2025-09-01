@@ -4,8 +4,8 @@
  */
 
 import StashGit, { FileStage, RenameStash, Stash, StashedFiles } from '../Git/StashGit'
+import { createHash } from 'node:crypto'
 import FileNode from './FileNode'
-import MessageNode from './MessageNode'
 import NodeFactory from './NodeFactory'
 import RepositoryNode from './RepositoryNode'
 import StashNode from './StashNode'
@@ -15,9 +15,9 @@ import WorkspaceGit from '../Git/WorkspaceGit'
  * A repository implementation using another name to avoid confusion with git repos.
  */
 export default class NodeContainer {
-    private stashGit: StashGit
-    private workspaceGit: WorkspaceGit
-    private nodeFactory: NodeFactory
+    protected stashGit: StashGit
+    protected workspaceGit: WorkspaceGit
+    protected nodeFactory: NodeFactory
 
     constructor(workspaceGit: WorkspaceGit) {
         this.workspaceGit = workspaceGit
@@ -26,10 +26,14 @@ export default class NodeContainer {
     }
 
     /**
-     * Gets the raw git stashes list.
+     * Gets the stashes text-list md5 hash.
      */
-    public async getRawStashesList(cwd: string): Promise<null | string> {
-        return this.stashGit.getRawStash(cwd)
+    public async getStashesMd5(cwd: string): Promise<string | undefined> {
+        return this.stashGit.getRawStash(cwd).then((rawStash: string | null) => {
+            return rawStash
+                ? createHash('md5').update(rawStash).digest('hex')
+                : undefined
+        })
     }
 
     /**
@@ -58,8 +62,12 @@ export default class NodeContainer {
      * Gets the stashes list.
      */
     public async getStashes(repositoryNode: RepositoryNode): Promise<StashNode[]> {
-        return (await this.stashGit.getStashes(repositoryNode.path))
+        const stashes = (await this.stashGit.getStashes(repositoryNode.path))
             .map((stash: Stash) => this.nodeFactory.createStashNode(stash, repositoryNode))
+
+        repositoryNode.setChildren(stashes)
+
+        return stashes
     }
 
     /**
@@ -68,7 +76,7 @@ export default class NodeContainer {
      * @param stashNode the parent stash
      */
     public async getFiles(stashNode: StashNode): Promise<FileNode[]> {
-        return this.stashGit.getStashedFiles(
+        const files = await this.stashGit.getStashedFiles(
             stashNode.path,
             stashNode.index,
             stashNode.parentHashes.length > 2,
@@ -107,6 +115,10 @@ export default class NodeContainer {
 
             return fileNodes
         })
+
+        stashNode.setChildren(files)
+
+        return files
     }
 
     /**
@@ -152,12 +164,5 @@ export default class NodeContainer {
         }
 
         throw new Error(`Unsupported fileNode type: ${fileNode.type}`)
-    }
-
-    /**
-     * Creates a message node.
-     */
-    public getMessageNode(message: string): MessageNode {
-        return this.nodeFactory.createMessageNode(message)
     }
 }

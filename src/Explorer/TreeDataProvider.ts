@@ -13,8 +13,10 @@ import {
     window,
 } from 'vscode'
 import Config from '../Config'
+import DirectoryNode from './TreeNode/DirectoryNode'
+import FileNode from '../StashNode/FileNode'
 import Node from '../StashNode/Node'
-import NodeContainer from '../StashNode/NodeContainer'
+import NodeContainer from '../Explorer/TreeNode/NodeContainer'
 import RepositoryNode from '../StashNode/RepositoryNode'
 import StashLabels from '../StashLabels'
 import StashNode from '../StashNode/StashNode'
@@ -74,6 +76,13 @@ export default class implements TreeDataProvider<Node> {
     /**
      * Reloads the explorer tree.
      */
+    public setSorting = (config: string): void => {
+        this.config.set(this.config.key.expDisplayFileSorting, config)
+    }
+
+    /**
+     * Reloads the explorer tree.
+     */
     public refresh = (): void => {
         this.reload('force')
     }
@@ -85,44 +94,55 @@ export default class implements TreeDataProvider<Node> {
      * @see TreeDataProvider.getChildren
      */
     public getChildren(node?: Node): Thenable<Node[]> | Node[] {
-        if ((node instanceof RepositoryNode || node instanceof StashNode) && node.children) {
-            return this.prepareChildren(node, node.children)
-        }
-
         if (!node) {
             const eagerLoad: boolean = this.config.get('explorer.eagerLoadStashes')
             return this.nodeContainer.getRepositories(eagerLoad)
-                .then((repositories) => this.prepareChildren(node, repositories))
+                .then((repositories) => this.prepareChildren(undefined, repositories))
         }
 
         if (node instanceof RepositoryNode) {
-            return this.nodeContainer.getStashes(node).then((stashes) => {
-                node.setChildren(stashes)
-                return this.prepareChildren(node, stashes)
-            })
+            return node.children
+                ? Promise.resolve(this.prepareChildren(node, node.children))
+                : this.nodeContainer.getStashes(node)
+                    .then((stashes) => this.prepareChildren(node, stashes))
         }
 
         if (node instanceof StashNode) {
-            return this.nodeContainer.getFiles(node).then((files) => {
-                const sort = this.config.get<string>('explorer.items.file.sorting')
+            return node.children
+                ? Promise.resolve(this.prepareChildren(node, node.children))
+                : this.nodeContainer.getFiles(node)
+                    .then((files) => {
+                        const sort = this.config.get<string>(this.config.key.expDisplayFileSorting)
+                        let children: (DirectoryNode | FileNode)[] = []
 
-                if (sort === 'path') {
-                    files = files.sort((fileA, fileB) => {
-                        return fileA.relativePath.localeCompare(fileB.relativePath)
-                    })
-                }
-                else if (sort === 'name') {
-                    files = files.sort((fileA, fileB) => {
-                        return fileA.fileName.localeCompare(fileB.fileName)
-                    })
-                }
+                        if (sort === 'name') {
+                            children = files.sort((fileA, fileB) => {
+                                return fileA.fileName.localeCompare(fileB.fileName)
+                            })
+                        }
+                        else if (sort === 'path') {
+                            children = files.sort((fileA, fileB) => {
+                                return fileA.relativePath.localeCompare(fileB.relativePath)
+                            })
+                        }
+                        else if (sort === 'tree') {
+                            files = files.sort((fileA, fileB) => {
+                                return fileA.relativePath.localeCompare(fileB.relativePath)
+                            })
+                            children = this.nodeContainer.makeDirectoryNode(node, files).children
+                        }
 
-                node.setChildren(files)
-                return this.prepareChildren(node, files)
-            })
+                        return this.prepareChildren(node, children)
+                    })
         }
 
-        return []
+        if (node instanceof DirectoryNode) {
+            return node.children
+        }
+
+        console.error('TreeDataProvider.getChildren(): Unknown node type. See the console for details.')
+        console.error(node)
+        throw new Error('TreeDataProvider.getChildren(): Unknown node type. See the console for details.')
     }
 
     /**
@@ -132,10 +152,10 @@ export default class implements TreeDataProvider<Node> {
      * @param children the parent's children
      */
     private prepareChildren(parent: Node | undefined, children: Node[]): Node[] {
-        const itemDisplayMode = this.config.get('explorer.itemDisplayMode')
+        const emptyRepoMode = this.config.get(this.config.key.expDisplayEmptyRepos)
 
         if (!parent) {
-            if (itemDisplayMode === 'hide-empty' && this.config.get('explorer.eagerLoadStashes')) {
+            if (emptyRepoMode === 'hide-empty' && this.config.get('explorer.eagerLoadStashes')) {
                 children = children.filter(
                     (repositoryNode) => (repositoryNode as RepositoryNode).childrenCount,
                 )
@@ -146,12 +166,12 @@ export default class implements TreeDataProvider<Node> {
             return children
         }
 
-        if (itemDisplayMode === 'indicate-empty') {
+        if (emptyRepoMode === 'indicate-empty') {
             if (!parent) {
-                return [this.nodeContainer.getMessageNode('No repositories found.')]
+                return [this.nodeContainer.makeMessageNode('No repositories found.')]
             }
             if (parent instanceof RepositoryNode) {
-                return [this.nodeContainer.getMessageNode('No stashes found.')]
+                return [this.nodeContainer.makeMessageNode('No stashes found.')]
             }
         }
 
@@ -188,11 +208,11 @@ export default class implements TreeDataProvider<Node> {
             if (pathUri) {
                 const path = pathUri.fsPath
 
-                return void this.nodeContainer.getRawStashesList(path).then((rawStash: null | string) => {
+                return void this.nodeContainer.getStashesMd5(path).then((md5: string | undefined) => {
                     const cachedRawStash = this.rawStashes[path]
 
-                    if (!cachedRawStash || cachedRawStash !== rawStash) {
-                        this.rawStashes[path] = rawStash ?? undefined
+                    if (!cachedRawStash || cachedRawStash !== md5) {
+                        this.rawStashes[path] = md5
                         this.onDidChangeTreeDataEmitter.fire()
                     }
                 })

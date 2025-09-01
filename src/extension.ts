@@ -9,7 +9,7 @@ import Config from './Config'
 import DiffDisplayer from './DiffDisplayer'
 import DocumentContentProvider from './Document/DocumentContentProvider'
 import FileSystemWatcherManager from './FileSystemWatcherManager'
-import NodeContainer from './StashNode/NodeContainer'
+import NodeContainer from './Explorer/TreeNode/NodeContainer'
 import { StashCommands } from './StashCommands'
 import StashLabels from './StashLabels'
 import TreeDataProvider from './Explorer/TreeDataProvider'
@@ -53,6 +53,9 @@ export function activate(context: ExtensionContext): void {
         workspace.registerTextDocumentContentProvider(UriGenerator.fileScheme, new DocumentContentProvider()),
 
         commands.registerCommand('gitstash.explorer.toggle', treeProvider.toggle),
+        commands.registerCommand('gitstash.explorer.sortName', () => { treeProvider.setSorting('name') }),
+        commands.registerCommand('gitstash.explorer.sortPath', () => { treeProvider.setSorting('path') }),
+        commands.registerCommand('gitstash.explorer.sortTree', () => { treeProvider.setSorting('tree') }),
         commands.registerCommand('gitstash.explorer.refresh', treeProvider.refresh),
 
         commands.registerCommand('gitstash.stash', stashCommands.stash),

@@ -189,15 +189,17 @@
                     "default": "${filename} [${type}] - ${filepath}",
                     "description": "Specifies file data to be set on clipboard\nAvailable tokens:\n${oldName} - the previous name\nSame than file.labelContent"
                 },
-                "gitstash.explorer.items.file.sorting": {
+                "gitstash.explorer.display.fileSorting": {
                     "type": "string",
                     "enum": [
+                        "name",
                         "path",
-                        "name"
+                        "tree"
                     ],
                     "enumDescriptions": [
+                        "Sort by name",
                         "Sort by path",
-                        "Sort by name"
+                        "Tree structure"
                     ],
                     "default": "path",
                     "description": "Configures the way stash files are listed"
@@ -228,7 +230,7 @@
                     "default": true,
                     "description": "If enabled, stashes will be preloaded instead of lazy loaded.\nThis is required to see the stashes count but may degrade performance if theres too much data"
                 },
-                "gitstash.explorer.itemDisplayMode": {
+                "gitstash.explorer.display.emptyRepositories": {
                     "type": "string",
                     "enum": [
                         "show-empty",
@@ -265,6 +267,24 @@
                 "command": "gitstash.explorer.toggle",
                 "title": "Toggle explorer",
                 "category": "GitStash"
+            },
+            {
+                "command": "gitstash.explorer.sortName",
+                "title": "Sort changes by name",
+                "category": "GitStash",
+                "icon": "$(list-unordered)"
+            },
+            {
+                "command": "gitstash.explorer.sortPath",
+                "title": "Sort changes by path",
+                "category": "GitStash",
+                "icon": "$(list-flat)"
+            },
+            {
+                "command": "gitstash.explorer.sortTree",
+                "title": "View as tree",
+                "category": "GitStash",
+                "icon": "$(list-tree)"
             },
             {
                 "command": "gitstash.explorer.refresh",
@@ -415,6 +435,18 @@
         "menus": {
             "commandPalette": [
                 {
+                    "command": "gitstash.explorer.sortName",
+                    "when": "false"
+                },
+                {
+                    "command": "gitstash.explorer.sortPath",
+                    "when": "false"
+                },
+                {
+                    "command": "gitstash.explorer.sortTree",
+                    "when": "false"
+                },
+                {
                     "command": "gitstash.explorer.refresh",
                     "when": "hasGitRepository && gitstash.explorer.enabled"
                 },
@@ -515,9 +547,24 @@
             ],
             "view/title": [
                 {
+                    "command": "gitstash.explorer.sortName",
+                    "when": "view == gitstash.explorer && config.gitstash.explorer.buttons && config.gitstash.explorer.display.fileSorting == 'tree'",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "gitstash.explorer.sortPath",
+                    "when": "view == gitstash.explorer && config.gitstash.explorer.buttons && config.gitstash.explorer.display.fileSorting == 'name'",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "gitstash.explorer.sortTree",
+                    "when": "view == gitstash.explorer && config.gitstash.explorer.buttons && config.gitstash.explorer.display.fileSorting == 'path'",
+                    "group": "navigation@1"
+                },
+                {
                     "command": "gitstash.explorer.refresh",
                     "when": "view == gitstash.explorer && config.gitstash.explorer.buttons",
-                    "group": "navigation"
+                    "group": "navigation@2"
                 }
             ],
             "view/item/context": [

@@ -36,11 +36,11 @@ export default class {
                 const result = Buffer.concat(outBuffer).toString(encoding ?? 'utf8')
                 const errResult = Buffer.concat(errBuffer).toString(encoding ?? 'utf8')
 
-                if (errResult.length) {
-                    reject(new ExecError(code, errResult, result))
+                if (code === 0) {
+                    resolve(`${result}${errResult}`)
                 }
                 else {
-                    resolve(result)
+                    reject(new ExecError(code, errResult, result))
                 }
             })
         })

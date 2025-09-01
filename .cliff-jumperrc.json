@@ -3,7 +3,7 @@
     "gitRepo": "auto",
     "gitToken": "none",
     "install": true,
-    "name": "vsix-gitstash",
+    "name": "vsx-gitstash",
     "org": "artrz",
     "packagePath": ".",
     "tagTemplate": "v{{new-version}}",

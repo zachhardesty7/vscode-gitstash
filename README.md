@@ -10,7 +10,7 @@
 [![OpenVSX Downloads](https://img.shields.io/open-vsx/dt/arturock/gitstash?color=c160ef)](https://open-vsx.org/extension/arturock/gitstash)
 [![OpenVSX rating](https://img.shields.io/open-vsx/stars/arturock/gitstash?color=c160ef)](https://open-vsx.org/extension/arturock/gitstash)
 <br>
-[![GitHub Release](https://img.shields.io/github/v/release/artrz/vsix-gitstash?color=08872B&label=GitHub%20Release)](https://github.com/artrz/vsix-gitstash/releases/latest)
+[![GitHub Release](https://img.shields.io/github/v/release/artrz/vsx-gitstash?color=08872B&label=GitHub%20Release)](https://github.com/artrz/vsx-gitstash/releases/latest)
 
 
 ## Features
@@ -48,7 +48,7 @@ In a multi-root project, the git repository its automatically inferred from the 
 
 Find it on the marketplace, openVSX registry or in the GitHub releases page.
 Click on the badges at the top of this file for your preferred source.
-The GitHub release is  [automatically generated](https://github.com/artrz/vsix-gitstash/actions) by a [GitHub Action](.github/workflows/release-to-github.yml).
+The GitHub release is  [automatically generated](https://github.com/artrz/vsx-gitstash/actions) by a [GitHub Action](.github/workflows/release-to-github.yml).
 
 
 ### Screenshots

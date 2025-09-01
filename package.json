@@ -27,13 +27,13 @@
         "stash diff",
         "multi-root ready"
     ],
-    "homepage": "https://github.com/artrz/vsix-gitstash/blob/master/README.md",
+    "homepage": "https://github.com/artrz/vsx-gitstash/blob/master/README.md",
     "repository": {
         "type": "git",
-        "url": "https://github.com/artrz/vsix-gitstash.git"
+        "url": "https://github.com/artrz/vsx-gitstash.git"
     },
     "bugs": {
-        "url": "https://github.com/artrz/vsix-gitstash/issues"
+        "url": "https://github.com/artrz/vsx-gitstash/issues"
     },
     "main": "./dist/extension",
     "activationEvents": [

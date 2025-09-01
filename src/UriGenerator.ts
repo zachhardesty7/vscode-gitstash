@@ -96,7 +96,7 @@ export default class UriGenerator {
      */
     private createTmpFile(content: string, filename: string): tmp.FileResult {
         const file = tmp.fileSync({
-            prefix: 'vsix-gitstash-',
+            prefix: 'vsx-gitstash-',
             postfix: path.extname(filename),
         })
 

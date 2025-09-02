@@ -3,6 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
+import * as path from 'path'
 import BaseNodeContainer from '../../StashNode/NodeContainer'
 import DirectoryNode from './DirectoryNode'
 import FileNode from '../../StashNode/FileNode'
@@ -18,11 +19,13 @@ export default class NodeContainer extends BaseNodeContainer {
     * getDirectoryNode
     */
     public makeDirectoryNode(parent: StashNode, files: FileNode[]): DirectoryNode {
-        const baseDirNode: DirectoryNode = new DirectoryNode(parent.parent.dirName, [], [])
+        const baseDirNode: DirectoryNode = new DirectoryNode(
+            parent.parent.path, '', parent.parent.dirName, [], [],
+        )
 
         files.forEach((fileNode) => {
             let dirNode = baseDirNode
-            const segments = fileNode.relativePath.split('/') // BUG: Fixme lol
+            const segments = fileNode.relativePath.split(path.sep)
 
             if (segments.length === 1) {
                 dirNode.files.push(fileNode)
@@ -30,9 +33,14 @@ export default class NodeContainer extends BaseNodeContainer {
             else {
                 for (let i = 0; i < segments.length; i += 1) {
                     if (i < segments.length - 1) {
+                        const basePath = segments.slice(0, i).join(path.sep)
                         const segment = segments[i]
-                        const subDir: DirectoryNode = dirNode.directories.find((subDir) => subDir.name === segment)
-                            ?? new DirectoryNode(segment, [], [])
+
+                        const subDir: DirectoryNode = dirNode.directories
+                            .find((subDir) => subDir.dirName === segment)
+                            ?? new DirectoryNode(
+                                baseDirNode.repositoryPath, basePath, segment, [], [],
+                            )
 
                         dirNode.directories.push(subDir)
                         dirNode = subDir

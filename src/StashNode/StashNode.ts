@@ -22,79 +22,83 @@ export default class StashNode extends Node {
         protected _children?: FileNode[],
     ) {
         super()
+        this.makeId('s', _shortHash, this.path)
     }
 
     /**
-     * Gets the node index.
+     * The node index.
      */
     public get index(): number {
         return this._index
     }
 
     /**
-     * Gets the node index with the stash@{N} format.
+     * The node index with the stash@{N} format.
      */
     public get atIndex(): string {
         return `stash@{${this._index}}`
     }
 
     /**
-     * Gets the node parent index.
+     * The node parent index.
      */
     public get parent(): RepositoryNode {
         return this._parent
     }
 
     /**
-     * Gets the path of repository containing this stash.
+     * The absolute path of repository containing this stash.
      */
     public get path(): string {
         return this.parent.path
     }
 
+    /**
+     * The stash subject, commonly in the form of "On some_branch_name: This is the msg set"
+     */
     public get subject(): string {
         return this._subject
     }
 
     /**
-     * Gets the node generation date.
+     * The stash generation date.
      */
     public get date(): Date {
         return this._date
     }
 
     /**
-     * Gets the node commit hash.
+     * The stash hash.
      */
     public get hash(): string {
         return this._hash
     }
 
     /**
-     * Gets the node commit abbreviated hash.
+     * The stash abbreviated hash.
      */
     public get shortHash(): string {
         return this._shortHash
     }
 
     /**
-     * Gets the hashes of the stash parents.
+     * The hashes of the parents.
      */
     public get parentHashes(): string[] {
         return this._parentHashes
     }
 
     /**
-     * Gets the node description.
+     * Basically what was defined as message.
      */
     public get description(): string {
         return this._description
     }
 
     /**
-     * Gets the node branch name.
+     * The node branch name.
      * This relies on the default git behavior (prepending the branch name in the
-     * description). If a stash is manually created with `stash store -m msg` this
+     * description). If a stash is manually created with `stash store - m msg` this
      * most probably will be undefined (unless manually prepending 'On branchname: msg').
      */
     public get branch(): string | undefined {
@@ -102,21 +106,21 @@ export default class StashNode extends Node {
     }
 
     /**
-     * Gets the stash note.
+     * The stash note.
      */
     public get note(): string | undefined {
         return this._note
     }
 
     /**
-     * Gets the loaded children.
+     * The loaded children.
      */
     public get children(): FileNode[] | undefined {
         return this._children
     }
 
     /**
-     * Gets the children count if available.
+     * The children count if available.
      */
     public get childrenCount(): number | undefined {
         return this._children
@@ -130,9 +134,5 @@ export default class StashNode extends Node {
     public setChildren(children: FileNode[]): this {
         this._children = children
         return this
-    }
-
-    public get id(): string {
-        return `S.${this.path}.${this.shortHash}`
     }
 }

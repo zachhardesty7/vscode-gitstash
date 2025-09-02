@@ -15,19 +15,26 @@ export default class RepositoryNode extends Node {
         protected _children?: StashNode[],
     ) {
         super()
+        this.makeId('r', this.path)
     }
 
     /**
-     * Gets the path of the repository.
+     * The absolute path of the repository.
      */
     public get path(): string {
         return `${this.basePath}${path.sep}${this.dirName}`
     }
 
+    /**
+     * The absolute base path of the repository (i.e. path without last directory).
+     */
     public get basePath(): string {
         return this._basePath
     }
 
+    /**
+     * The repository root directory (i.e. last directory from the location path).
+     */
     public get dirName(): string {
         return this._dirName
     }
@@ -37,14 +44,14 @@ export default class RepositoryNode extends Node {
     }
 
     /**
-     * Gets the children.
+     * The children.
      */
     public get children(): StashNode[] | undefined {
         return this._children
     }
 
     /**
-     * Gets the children count if available.
+     * The children count if available.
      */
     public get childrenCount(): number | undefined {
         return this._children
@@ -58,9 +65,5 @@ export default class RepositoryNode extends Node {
     public setChildren(children: StashNode[]): this {
         this._children = children
         return this
-    }
-
-    public get id(): string {
-        return `R.${this.path}`
     }
 }

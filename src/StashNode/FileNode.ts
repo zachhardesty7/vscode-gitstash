@@ -18,6 +18,7 @@ export default class FileNode extends Node {
         protected _oldFileName?: string,
     ) {
         super()
+        this.makeId(`f${_type}`, _parent.shortHash, this.path)
     }
 
     public get type(): FileNodeType {
@@ -28,45 +29,45 @@ export default class FileNode extends Node {
         return this._parent
     }
 
-    public get fileName(): string {
-        return this._fileName
-    }
-
     /**
-     * Gets the relative file base path, i.e. the relative path without filename.
+     * The absolute path of the stashed file.
      */
-    public get subPath(): string {
-        return this._subPath
+    public get path(): string {
+        return `${this.parent.path}${path.sep}${this.relativePath}`
     }
 
     /**
-     * Gets the relative file path of the stashed file.
+     * The relative file path of the stashed file, i.e. the path without the repository.
      */
     public get relativePath(): string {
         return path.normalize(`${this.subPath}${path.sep}${this.fileName}`)
     }
 
     /**
-     * Gets the absolute file path of the stashed file.
+     * The relative file base path, i.e. the relative path without filename.
      */
-    public get path(): string {
-        return `${this.parent.path}${path.sep}${this.relativePath}`
+    public get subPath(): string {
+        return this._subPath
     }
 
-    public get oldFileName(): string | undefined {
-        return this._oldFileName
+    public get fileName(): string {
+        return this._fileName
     }
 
-    public get oldSubPath(): string | undefined {
-        return this._oldSubPath
+    public get oldPath(): string {
+        return `${this.parent.path}${path.sep}${this.oldRelativePath}`
     }
 
     public get oldRelativePath(): string | undefined {
         return path.normalize(`${this.oldSubPath}${path.sep}${this.oldFileName}`)
     }
 
-    public get oldPath(): string {
-        return `${this.parent.path}${path.sep}${this.oldRelativePath}`
+    public get oldSubPath(): string | undefined {
+        return this._oldSubPath
+    }
+
+    public get oldFileName(): string | undefined {
+        return this._oldFileName
     }
 
     public get date(): Date {
@@ -91,10 +92,5 @@ export default class FileNode extends Node {
 
     public get isUntracked(): boolean {
         return this.type === FileNodeType.Untracked
-    }
-
-    public get id(): string {
-        return `F-${this.type}.${this.parent.path}`
-            + `.${this.parent.shortHash}.${this.relativePath}`
     }
 }

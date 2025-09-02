@@ -4,5 +4,20 @@
  */
 
 export default abstract class Node {
-    public abstract get id(): string
+    protected _id!: string
+
+    public get id(): string {
+        return this._id
+    }
+
+    /**
+     * Creates the node id.
+     * This should be called from the constructors.
+     * Independent function so object accessors can be used when calling this.
+     */
+    protected makeId(prefix: string, ...segments: string[]): string {
+        return this._id = `${prefix}.` + segments
+            .map((segment) => segment.toLocaleLowerCase().replaceAll(/[^a-z0-9]/g, '_'))
+            .join('.')
+    }
 }

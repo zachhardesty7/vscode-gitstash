@@ -12,6 +12,7 @@ export default class MessageNode extends TreeNode {
         protected _parent?: Node,
     ) {
         super()
+        this.makeId('m', _parent?.id ?? '', _message)
     }
 
     public get message(): string {
@@ -23,9 +24,5 @@ export default class MessageNode extends TreeNode {
      */
     public get parent(): Node | undefined {
         return this._parent
-    }
-
-    public get id(): string {
-        return `M.${this.message}`
     }
 }

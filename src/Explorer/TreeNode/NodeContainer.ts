@@ -20,7 +20,7 @@ export default class NodeContainer extends BaseNodeContainer {
     */
     public makeDirectoryNode(parent: StashNode, files: FileNode[]): DirectoryNode {
         const baseDirNode: DirectoryNode = new DirectoryNode(
-            parent.parent.path, '', parent.parent.dirName, [], [],
+            parent, '', parent.parent.dirName, [], [],
         )
 
         files.forEach((fileNode) => {
@@ -38,9 +38,7 @@ export default class NodeContainer extends BaseNodeContainer {
 
                         const subDir: DirectoryNode = dirNode.directories
                             .find((subDir) => subDir.dirName === segment)
-                            ?? new DirectoryNode(
-                                baseDirNode.repositoryPath, basePath, segment, [], [],
-                            )
+                            ?? new DirectoryNode(parent, basePath, segment, [], [])
 
                         dirNode.directories.push(subDir)
                         dirNode = subDir

@@ -6,32 +6,34 @@
 import * as path from 'path'
 import FileNode from '../../StashNode/FileNode'
 import TreeNode from './TreeNode'
+import StashNode from '../../StashNode/StashNode'
 
 export default class DirectoryNode extends TreeNode {
     constructor(
-        public repositoryPath: string,
-        public basePath: string,
-        public dirName: string,
+        protected _parent: StashNode,
+        protected _basePath: string,
+        protected _dirName: string,
         public directories: DirectoryNode[],
         public files: FileNode[],
     ) {
         super()
+        this.makeId('d', _parent.hash, this.path)
+    }
+
+    public get dirName(): string {
+        return this._dirName
     }
 
     /**
-     * Gets the full path corresponding to this node.
+     * The full path corresponding to this node.
      */
     public get path(): string {
         return path.normalize(
-            `${this.repositoryPath}${path.sep}${this.basePath}${path.sep}${this.dirName}`,
+            `${this._parent.parent.path}${path.sep}${this._basePath}${path.sep}${this._dirName}`,
         )
     }
 
     public get children(): (DirectoryNode | FileNode)[] {
         return [...this.directories, ...this.files]
-    }
-
-    public get id(): string {
-        return `D.${this.path.replaceAll(/[^a-zA-Z0-9]/g, '-')}`
     }
 }

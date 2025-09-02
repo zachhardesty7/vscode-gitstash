@@ -6,6 +6,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as tmp from 'tmp'
+import DirectoryNode from './Explorer/TreeNode/DirectoryNode'
 import FileNode from './StashNode/FileNode'
 import { FileStage } from './Git/StashGit'
 import NodeContainer from './StashNode/NodeContainer'
@@ -36,6 +37,10 @@ export default class UriGenerator {
      */
     public createForTreeItem(node: FileNode): Uri {
         return Uri.parse(`${UriGenerator.fileScheme}:${node.path}?type=${node.type}&t=${new Date().getTime()}`)
+    }
+
+    public createForDirectory(node: DirectoryNode): Uri {
+        return Uri.parse(`file:${node.path}`)
     }
 
     /**

@@ -125,13 +125,14 @@ export default class {
 
     private geDirectoryItem(node: DirectoryNode): TreeItem {
         return {
-            id: node.name.replaceAll('[^a-z0-9]', '-'),
-            label: node.name,
+            id: node.id,
+            label: node.dirName,
             description: undefined,
             tooltip: undefined,
             iconPath: ThemeIcon.Folder,
             contextValue: 'directory',
             collapsibleState: TreeItemCollapsibleState.Collapsed,
+            resourceUri: this.uriGenerator.createForDirectory(node),
         }
     }
 

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.4.1] - 2025-09-02
+
+### Fixed
+
+- Unable to copy directory path
+- Display custom directory icons
+
+[https://github.com/artrz/vsx-gitstash/compare/v6.4.0..v6.5.0](https://github.com/artrz/vsx-gitstash/compare/v6.4.0..v6.5.0)
+
 ## [6.4.0] - 2025-09-01
 
 ### Changed

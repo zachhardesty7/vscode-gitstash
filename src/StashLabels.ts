@@ -10,6 +10,7 @@ import Node from './StashNode/Node'
 import RepositoryNode from './StashNode/RepositoryNode'
 import StashNode from './StashNode/StashNode'
 import MessageNode from './Explorer/TreeNode/MessageNode'
+import DirectoryNode from './Explorer/TreeNode/DirectoryNode'
 
 export default class StashLabels {
     private config: Config
@@ -136,6 +137,10 @@ export default class StashLabels {
 
         if (node instanceof MessageNode) {
             return node.message
+        }
+
+        if (node instanceof DirectoryNode) {
+            return node.path
         }
 
         throw new Error(`getContent(): Unsupported Node: ${node.id}`)

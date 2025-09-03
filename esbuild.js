@@ -51,7 +51,7 @@ async function main() {
     }
 }
 
-main().catch((e) => {
+main().catch(/** @param {unknown} e */(e) => {
     console.error(e)
     process.exit(1)
 })

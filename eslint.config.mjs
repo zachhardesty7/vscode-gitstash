@@ -1,8 +1,7 @@
-// @ts-check
-
 import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
+import globals from 'globals'
 import stylistic from '@stylistic/eslint-plugin'
+import tseslint from 'typescript-eslint'
 
 const style = stylistic.configs.customize({
     arrowParens: true,
@@ -12,7 +11,6 @@ const style = stylistic.configs.customize({
     indent: 4,
     jsx: false,
     quoteProps: 'consistent-as-needed',
-    // semi: true,
 })
 
 export default tseslint.config(
@@ -24,7 +22,6 @@ export default tseslint.config(
             '*vscode-test.mjs',
         ],
     },
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     eslint.configs.recommended,
     ...tseslint.configs.strictTypeChecked,
     ...tseslint.configs.stylisticTypeChecked,
@@ -50,6 +47,16 @@ export default tseslint.config(
             '@stylistic/indent': ['error', 4, { ignoredNodes: ['ConditionalExpression'], SwitchCase: 1 }],
             '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
             '@stylistic/wrap-iife': ['error', 'inside', { functionPrototypeMethods: true }],
+        },
+    },
+    {
+        files: ['esbuild.js'],
+        languageOptions: {
+            // provides require, console, process: NodeJS.Process
+            globals: { ...globals.node },
+        },
+        rules: {
+            '@typescript-eslint/no-require-imports': 'off',
         },
     },
 )

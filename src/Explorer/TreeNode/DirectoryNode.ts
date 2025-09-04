@@ -12,25 +12,55 @@ export default class DirectoryNode extends TreeNode {
     constructor(
         protected _parent: StashNode,
         protected _basePath: string,
+        protected _subPath: string,
         protected _dirName: string,
         public directories: DirectoryNode[],
         public files: FileNode[],
     ) {
         super()
-        this.makeId('d', _parent.hash, this.path)
-    }
-
-    public get dirName(): string {
-        return this._dirName
+        this.makeId('d', _basePath, _parent.shortHash, this.relativePath)
     }
 
     /**
      * The full path corresponding to this node.
+     * `/path/to/repo/base/path/dirName`
      */
     public get path(): string {
         return path.normalize(
-            `${this._parent.parent.path}${path.sep}${this._basePath}${path.sep}${this._dirName}`,
+            `${this.basePath}${path.sep}${this.relativePath}`,
         )
+    }
+
+    /**
+     * The absolute base path of the repository.
+     * `/path/to/repository`/sub/path/dirName
+     */
+    public get basePath(): string {
+        return this._basePath
+    }
+
+    /**
+     * The relative directory path, i.e. the path without the repository basePath.
+     * /path/to/repository/`sub/path/dirName`
+     */
+    public get relativePath(): string {
+        return path.normalize(`${this.subPath}${path.sep}${this.dirName}`)
+    }
+
+    /**
+     * The relative base path, i.e. relative path without last directory. May be '.'.
+     * /path/to/repository/`sub/path`/dirName
+     */
+    public get subPath(): string {
+        return this._subPath
+    }
+
+    /**
+     * The directory name.
+     * /path/to/repo/base/path/`dirName`
+     */
+    public get dirName(): string {
+        return this._dirName
     }
 
     public get children(): (DirectoryNode | FileNode)[] {

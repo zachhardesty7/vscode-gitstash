@@ -22,7 +22,7 @@ export default class StashNode extends Node {
         protected _children?: FileNode[],
     ) {
         super()
-        this.makeId('s', _shortHash, this.path)
+        this.makeId('s', this.path, _shortHash)
     }
 
     /**
@@ -47,7 +47,8 @@ export default class StashNode extends Node {
     }
 
     /**
-     * The absolute path of repository containing this stash.
+     * The absolute path of the repository containing this stash.
+     * `/path/to/repository`
      */
     public get path(): string {
         return this.parent.path

@@ -20,6 +20,7 @@ export default class RepositoryNode extends Node {
 
     /**
      * The absolute path of the repository.
+     * `/path/to/repository`
      */
     public get path(): string {
         return `${this.basePath}${path.sep}${this.dirName}`
@@ -27,6 +28,7 @@ export default class RepositoryNode extends Node {
 
     /**
      * The absolute base path of the repository (i.e. path without last directory).
+     * /`path/to`/repository
      */
     public get basePath(): string {
         return this._basePath
@@ -34,6 +36,7 @@ export default class RepositoryNode extends Node {
 
     /**
      * The repository root directory (i.e. last directory from the location path).
+     * /path/to/`repository`
      */
     public get dirName(): string {
         return this._dirName

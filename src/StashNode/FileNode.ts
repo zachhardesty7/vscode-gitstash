@@ -18,7 +18,7 @@ export default class FileNode extends Node {
         protected _oldFileName?: string,
     ) {
         super()
-        this.makeId(`f${_type}`, _parent.shortHash, this.path)
+        this.makeId(`f${_type}`, _parent.path, _parent.shortHash, this.relativePath)
     }
 
     public get type(): FileNodeType {
@@ -38,13 +38,15 @@ export default class FileNode extends Node {
 
     /**
      * The relative file path of the stashed file, i.e. the path without the repository.
+     * /path/to/repository/`sub/path/file.ext`
      */
     public get relativePath(): string {
         return path.normalize(`${this.subPath}${path.sep}${this.fileName}`)
     }
 
     /**
-     * The relative file base path, i.e. the relative path without filename.
+     * The relative base path, i.e. relative path without last directory. May be '.'.
+     * /path/to/repository/`sub/path`/file.ext
      */
     public get subPath(): string {
         return this._subPath

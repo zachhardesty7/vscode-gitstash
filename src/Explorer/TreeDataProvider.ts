@@ -129,7 +129,7 @@ export default class implements TreeDataProvider<Node> {
                             files = files.sort((fileA, fileB) => {
                                 return fileA.relativePath.localeCompare(fileB.relativePath)
                             })
-                            children = this.nodeContainer.makeDirectoryNode(node, files).children
+                            children = this.nodeContainer.makeDirectoryNodes(node, files)
                         }
 
                         return this.prepareChildren(node, children)
@@ -171,7 +171,7 @@ export default class implements TreeDataProvider<Node> {
                 return [this.nodeContainer.makeMessageNode('No repositories found.')]
             }
             if (parent instanceof RepositoryNode) {
-                return [this.nodeContainer.makeMessageNode('No stashes found.')]
+                return [this.nodeContainer.makeMessageNode('No stashes found.', parent)]
             }
         }
 

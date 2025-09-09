@@ -98,7 +98,7 @@ export class Commands {
      * @param repositoryNode the node with the directory to be opened
      */
     public openFile = (fileNode: FileNode): void => void vscode.commands
-        .executeCommand('vscode.open', vscode.Uri.parse(fileNode.path))
+        .executeCommand('vscode.open', vscode.Uri.file(fileNode.path))
 
     /**
      * Opens the directory pointed by repository node.

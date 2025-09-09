@@ -1,20 +1,23 @@
 name: "Release version"
 
-on: 
+on:
   push:
     tags:
     - 'v*.*.*'
 
 env:
-  EXT_GLOB_NAME: gitstash-*.vsix
+  EXT_NAME: gitstash-${{ github.ref_name }}.vsix
 
 jobs:
   release:
-    name: Release version
+    name: Build and release
     runs-on: ubuntu-latest
     steps:
+      - name: Info
+        run: echo "Releasing $EXT_NAME"
+
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,22 +27,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install VSCE
-        run: npm install --global vsce
-
       - name: Create archive
-        run: vsce package
+        run: npx vsce package
 
       - name: GitHub Release
-        id: step_3
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
           name: ${{ github.ref_name }}
-          artifacts: ${{ env.EXT_GLOB_NAME }}
+          artifacts: ${{ env.EXT_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           artifactContentType: application/zip
-          draft: false
-          prerelease: false
           artifactErrorsFailBuild: true
-          generateReleaseNotes: false
+
+      - name: Marketplace Release
+        run: npx vsce publish --packagePath ${{ env.EXT_NAME }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}

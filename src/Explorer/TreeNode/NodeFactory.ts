@@ -36,20 +36,20 @@ export default class NodeFactory extends BaseNodeFactory {
             }
 
             for (let i = 0; i < segments.length; i += 1) {
-                // Use this dirName to search for a DirectoryNode matching this name.
                 const dirName = segments[i]
 
+                // Search for a DirectoryNode matching the current directory.
                 let subDirNode = dirNode.directories
                     .find((subDir) => subDir.dirName === dirName)
 
                 if (!subDirNode) {
-                    // This generates an incremental subPath, starting from an empty string
-                    // when i = 0, and appending a subdirectory segment on each iteration.
+                    // Incremental relative subPath, using '.' to represent the root dir
+                    // When i = 0, or appending a subdirectory segments on iterations.
                     // e.g. ...repo/sub/path/file.ext, i=0: '.', i=1: sub, i=2: sub/path
                     const subPath = segments.slice(0, i).join(path.sep) || '.'
 
-                    // If the subdirectory node hasn't doesn't exist yet we need to
-                    // create and add it to the parent's child directories container.
+                    // If the subdirectory node doesn't exist, create it and add it to the
+                    // parent's sub-directories container.
                     subDirNode = this.newDirectory(parent, subPath, dirName)
 
                     dirNode.directories.push(subDirNode)

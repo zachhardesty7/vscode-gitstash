@@ -18,9 +18,12 @@ import UriGenerator from './UriGenerator'
 import WorkspaceGit from './Git/WorkspaceGit'
 
 export function activate(context: ExtensionContext): void {
-    const channelName = 'GitStash'
+    const packJson = context.extension.packageJSON as { name: string, displayName: string }
 
-    const config = new Config('gitstash')
+    const configPrefix = packJson.name
+    const channelName = packJson.displayName
+
+    const config = new Config(configPrefix)
 
     const nodeContainer = new NodeContainer(new WorkspaceGit(config))
     const stashLabels = new StashLabels(config)
@@ -51,6 +54,9 @@ export function activate(context: ExtensionContext): void {
         treeProvider.createTreeView(),
 
         workspace.registerTextDocumentContentProvider(UriGenerator.fileScheme, new DocumentContentProvider()),
+
+        commands.registerCommand('gitstash.settings.open', () => commands.executeCommand(
+            'workbench.action.openSettings', `@ext:${context.extension.id}`)),
 
         commands.registerCommand('gitstash.explorer.toggle', treeProvider.toggle),
         commands.registerCommand('gitstash.explorer.sortName', () => { treeProvider.setSorting('name') }),

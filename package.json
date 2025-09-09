@@ -264,6 +264,11 @@
         },
         "commands": [
             {
+                "command": "gitstash.settings.open",
+                "title": "Open Settings",
+                "category": "GitStash"
+            },
+            {
                 "command": "gitstash.explorer.toggle",
                 "title": "Toggle explorer",
                 "category": "GitStash"
@@ -565,6 +570,11 @@
                     "command": "gitstash.explorer.refresh",
                     "when": "view == gitstash.explorer && config.gitstash.explorer.buttons",
                     "group": "navigation@2"
+                },
+                {
+                    "submenu": "explorer.actions.secondary",
+                    "when": "view == gitstash.explorer && config.gitstash.explorer.buttons",
+                    "group": "navigation@10"
                 }
             ],
             "view/item/context": [
@@ -659,6 +669,12 @@
                     "group": "menu_section_3@1"
                 }
             ],
+            "explorer.actions.secondary": [
+                {
+                    "command": "gitstash.settings.open",
+                    "group": "section_1@1"
+                }
+            ],
             "file.compare": [
                 {
                     "command": "gitstash.diffChangesCurrent",
@@ -714,6 +730,11 @@
             ]
         },
         "submenus": [
+            {
+                "id": "explorer.actions.secondary",
+                "label": "More actions",
+                "icon": "$(ellipsis)"
+            },
             {
                 "id": "file.compare",
                 "label": "Compare"

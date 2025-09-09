@@ -95,7 +95,7 @@ export class Commands {
     /**
      * Opens the file inside an editor.
      *
-     * @param repositoryNode the node with the directory to be opened
+     * @param fileNode the node with the file to open
      */
     public openFile = (fileNode: FileNode): void => void vscode.commands
         .executeCommand('vscode.open', vscode.Uri.file(fileNode.path))
@@ -103,7 +103,7 @@ export class Commands {
     /**
      * Opens the directory pointed by repository node.
      *
-     * @param repositoryNode the node with the directory to be opened
+     * @param repositoryNode the node with the directory to open
      */
     public openDir = (repositoryNode: RepositoryNode): void => void vscode.env
         .openExternal(vscode.Uri.parse(repositoryNode.path))

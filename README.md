@@ -45,11 +45,10 @@ You don't need to use the explorer buttons, just type `gitstash` in the command 
 In a multi-root project, the git repository its automatically inferred from the current open document if there's one.
 
 
-### Install
+### Installation
 
-Find it on the marketplace, openVSX registry or in the GitHub releases page.
-Click on the badges at the top of this file for your preferred source.
-The GitHub release is  [automatically generated](https://github.com/artrz/vsx-gitstash/actions) by a [GitHub Action](.github/workflows/release-to-github.yml).
+Directly available on editors using [VSC Marketplace](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash) and [OpenVSX Registry](https://open-vsx.org/extension/arturock/gitstash). vsix file on [GitHub](https://github.com/artrz/vsx-gitstash/releases).
+Releases are [automatically](.github/workflows/release-version.yml) [generated](https://github.com/artrz/vsx-gitstash/actions) 🤖.
 
 
 ### Screenshots

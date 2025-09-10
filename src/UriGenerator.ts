@@ -48,7 +48,7 @@ export default class UriGenerator {
      */
     public createForNodePath(fileNode: FileNode): Uri | undefined {
         const currentPath = fileNode.isRenamed
-            ? fileNode.oldPath
+            ? fileNode.oldPath! // eslint-disable-line @typescript-eslint/no-non-null-assertion
             : fileNode.path
 
         return fs.existsSync(currentPath) ? Uri.file(currentPath) : undefined
@@ -85,12 +85,12 @@ export default class UriGenerator {
         const query = `cwd=${node.parent.path}`
             + `&index=${node.parent.index}`
             + `&path=${node.relativePath}`
-            + `&oldPath=${node.oldRelativePath}`
+            + `&oldPath=${node.oldRelativePath ?? ''}`
             + `&type=${node.type}`
             + `&side=${side ?? ''}`
             + `&t=${timestamp}`
 
-        return Uri.parse(`${UriGenerator.fileScheme}:${node.path}?${query}`)
+        return Uri.parse(`${UriGenerator.fileScheme}://${node.path}?${query}`)
     }
 
     /**

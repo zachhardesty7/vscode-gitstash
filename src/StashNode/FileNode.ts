@@ -56,12 +56,19 @@ export default class FileNode extends Node {
         return this._fileName
     }
 
-    public get oldPath(): string {
-        return `${this.parent.path}${path.sep}${this.oldRelativePath}`
+    public get oldPath(): string | undefined {
+        return this.oldRelativePath
+            ? `${this.parent.path}${path.sep}${this.oldRelativePath}`
+            : undefined
     }
 
+    /**
+     * @see FileNode.relativePath()
+     */
     public get oldRelativePath(): string | undefined {
-        return path.normalize(`${this.oldSubPath}${path.sep}${this.oldFileName}`)
+        return this.oldFileName
+            ? path.normalize(`${this.oldSubPath}${path.sep}${this.oldFileName}`)
+            : undefined
     }
 
     public get oldSubPath(): string | undefined {

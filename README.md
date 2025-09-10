@@ -11,7 +11,7 @@
 [![OpenVSX rating](https://img.shields.io/open-vsx/stars/arturock/gitstash?color=c160ef)](https://open-vsx.org/extension/arturock/gitstash)
 <br>
 [![GitHub Release](https://img.shields.io/github/v/release/artrz/vsx-gitstash?color=08872B&label=GitHub%20Release)](https://github.com/artrz/vsx-gitstash/releases/latest)
-
+[![Release](https://github.com/artrz/vsx-gitstash/actions/workflows/release-version.yml/badge.svg)](https://github.com/artrz/vsx-gitstash/actions/workflows/release-version.yml)
 
 ## Features
 

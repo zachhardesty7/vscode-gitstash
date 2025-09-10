@@ -38,15 +38,25 @@ jobs:
       - name: Create archive
         run: npx vsce package
 
+      - name: Generate release notes
+        id: release-notes
+        uses: RedCrafter07/release-notes-action@v1.0.1
+        with:
+          tag-name: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref_name }}
           name: 🚀 ${{ env.GIT_TAG }}
+          body: ${{ env.RELEASE_NOTES }}
           artifacts: ${{ env.EXT_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifactContentType: application/zip
           artifactErrorsFailBuild: true
+        env:
+          RELEASE_NOTES: ${{ steps.release-notes.outputs.release-notes }}
 
       - name: Marketplace Release
         run: npx vsce publish --packagePath ${{ env.EXT_NAME }}

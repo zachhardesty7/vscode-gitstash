@@ -6,13 +6,19 @@ on:
     - 'v*.*.*'
 
 env:
-  EXT_NAME: gitstash-${{ github.ref_name }}.vsix
+  EXT_NAME: extension.vsix
 
 jobs:
   release:
     name: publish
     runs-on: ubuntu-latest
     steps:
+      - name: Set tag env
+        run: echo "GIT_TAG=`echo ${GITHUB_REF_NAME} | cut -c 2-6`" >> $GITHUB_ENV
+
+      - name: Set file name
+        run: echo "EXT_NAME=gitstash-${GIT_TAG}.vsix" >> $GITHUB_ENV
+
       - name: Info
         run: echo "============================ $EXT_NAME ============================"
 

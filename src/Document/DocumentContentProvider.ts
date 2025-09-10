@@ -6,20 +6,23 @@
 import * as vscode from 'vscode'
 import StashGit, { FileStage } from '../Git/StashGit'
 import FileNodeType from '../StashNode/FileNodeType'
-import { URLSearchParams } from 'url'
 
 export default class implements vscode.TextDocumentContentProvider {
     private onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>()
 
     public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
-        const params = new URLSearchParams(uri.query)
+        const params = uri.query.split('&').reduce<Record<string, string>>((data, kv) => {
+            const [key, value] = kv.split('=')
+            data[key] = value
+            return data
+        }, {})
 
-        const cwd = params.get('cwd')
-        const index = parseInt(params.get('index') ?? '-1', 10)
-        const path = params.get('path')
-        const oldPath = params.get('oldPath') ?? ''
-        const type = params.get('type') as FileNodeType
-        const side = params.get('side') as FileStage
+        const cwd = params.cwd
+        const index = parseInt(params.index, 10)
+        const path = params.path
+        const oldPath = params.oldPath
+        const type = params.type as FileNodeType
+        const side = params.side as FileStage
 
         if (!cwd || !path || index < 0) {
             console.error(`cwd: ${cwd}, path: ${path}, index: ${index}`)
@@ -51,7 +54,7 @@ export default class implements vscode.TextDocumentContentProvider {
                 contents = stashGit.getThirdParentContents(cwd, index, path)
             }
             else {
-                console.warn(`provideTextDocumentContent type[${params.get('type')}] side[${side}]`)
+                console.warn(`provideTextDocumentContent type[${params.type}] side[${side}]`)
                 console.warn(uri.query)
             }
         }

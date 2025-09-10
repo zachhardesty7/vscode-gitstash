@@ -82,10 +82,10 @@ export default class UriGenerator {
     private generateUri(node: FileNode, side?: string): Uri {
         const timestamp = new Date().getTime()
 
-        const query = `cwd=${node.parent.path}`
+        const query = `cwd=${encodeURIComponent(node.parent.path)}`
             + `&index=${node.parent.index}`
-            + `&path=${node.relativePath}`
-            + `&oldPath=${node.oldRelativePath ?? ''}`
+            + `&path=${encodeURIComponent(node.relativePath)}`
+            + `&oldPath=${encodeURIComponent(node.oldRelativePath ?? '')}`
             + `&type=${node.type}`
             + `&side=${side ?? ''}`
             + `&t=${timestamp}`

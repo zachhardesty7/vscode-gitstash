@@ -187,13 +187,13 @@ Tests are located in `src/test/`. Run `npm test` to execute the test suite.
 Once you're in the main branch with all changes merged and ready to release a new version:
 
 Use `npm run pub:bump` to increment the version and update the changelog and commit the changes. Internally,
-`pub:bump` uses cliff-jumper to automatize the process. Notice this script also calls `vsce package`.
+`pub:bump` uses cliff-jumper to automatize the process.
 
-To undo a bump, use `npm run pub:debump [generated tag]` which undoes the commit and deletes the tag. E.g.:
+To undo a bump, use `npm run pub:debump {generated tag}` which undoes the commit and deletes the tag. E.g.:
 `npm run pub:debump v0.5.0`
 
 Finally, run `npm run pub:release` to push the changes along with the new tag.
-Publishing will also upload the new version to vscode Marketplace and the Open VSX Registry.
+Pushing the tag will trigger a workflow that creates a new Github release and publishes the new version in the Marketplace and the Open VSX Registry.
 
 
 ## License

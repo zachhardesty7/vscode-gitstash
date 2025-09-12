@@ -1,6 +1,6 @@
 # Git Stash
 
-> Seamlessly integration of git stash functionalities to your editor.
+> Seamlessly integration of git stash functionalities into your editor.
 
 [![Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/arturock.gitstash?color=f2266e&label=VS%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
 [![Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/arturock.gitstash?color=f2266e)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
@@ -12,6 +12,10 @@
 <br>
 [![GitHub Release](https://img.shields.io/github/v/release/artrz/vsx-gitstash?color=08872B&label=GitHub%20Release)](https://github.com/artrz/vsx-gitstash/releases/latest)
 [![Release](https://github.com/artrz/vsx-gitstash/actions/workflows/release-version.yml/badge.svg)](https://github.com/artrz/vsx-gitstash/actions/workflows/release-version.yml)
+
+[![Sponsoring](https://img.shields.io/badge/-black?style=social&logo=&label=☕%20%20%20Buy%20me%20a%20Coffee)](https://ko-fi.com/artrz)
+<br>
+Like the extension? You can support me with a coffee ☕.
 
 ## Features
 

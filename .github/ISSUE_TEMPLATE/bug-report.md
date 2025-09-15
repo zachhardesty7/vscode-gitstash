@@ -10,6 +10,8 @@ assignees: ''
 **Bug description**
 A clear and concise description of what the bug is.
 
+ - [ ] I'm using the latest version of the extension.
+
 **How to Reproduce**
 1. Go to '...'
 2. Click on '....'
@@ -22,7 +24,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**System:**
+**System**
 Paste your editor's about information (version, OS, etc).
 
 **Additional context**

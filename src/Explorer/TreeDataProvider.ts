@@ -5,6 +5,7 @@
 
 import {
     EventEmitter,
+    ProviderResult,
     TreeDataProvider,
     TreeItem,
     TreeView,
@@ -14,7 +15,7 @@ import {
 } from 'vscode'
 import Config from '../Config'
 import DirectoryNode from './TreeNode/DirectoryNode'
-import FileNode from '../StashNode/FileNode'
+import FileNode from './TreeNode/FileNode'
 import Node from '../StashNode/Node'
 import NodeContainer from '../Explorer/TreeNode/NodeContainer'
 import RepositoryNode from '../StashNode/RepositoryNode'
@@ -27,6 +28,7 @@ export default class implements TreeDataProvider<Node> {
     private readonly onDidChangeTreeDataEmitter = new EventEmitter<void>()
     readonly onDidChangeTreeData = this.onDidChangeTreeDataEmitter.event
 
+    public view: TreeView<Node>
     private config: Config
     private nodeContainer: NodeContainer
     private treeItemFactory: TreeItemFactory
@@ -43,6 +45,7 @@ export default class implements TreeDataProvider<Node> {
         this.config = config
         this.nodeContainer = nodeContainer
         this.treeItemFactory = new TreeItemFactory(config, uriGenerator, stashLabels)
+        this.view = this.createTreeView()
     }
 
     /**
@@ -116,14 +119,20 @@ export default class implements TreeDataProvider<Node> {
                         let children: (DirectoryNode | FileNode)[] = []
 
                         if (sort === 'name') {
-                            children = files.sort((fileA, fileB) => {
-                                return fileA.fileName.localeCompare(fileB.fileName)
-                            })
+                            children = this.nodeContainer.makeChildFileNodes(
+                                node,
+                                files.sort((fileA, fileB) => {
+                                    return fileA.fileName.localeCompare(fileB.fileName)
+                                }),
+                            )
                         }
                         else if (sort === 'path') {
-                            children = files.sort((fileA, fileB) => {
-                                return fileA.relativePath.localeCompare(fileB.relativePath)
-                            })
+                            children = this.nodeContainer.makeChildFileNodes(
+                                node,
+                                files.sort((fileA, fileB) => {
+                                    return fileA.relativePath.localeCompare(fileB.relativePath)
+                                }),
+                            )
                         }
                         else if (sort === 'tree') {
                             files = files.sort((fileA, fileB) => {
@@ -185,6 +194,23 @@ export default class implements TreeDataProvider<Node> {
      */
     public getTreeItem(node: Node): TreeItem {
         return this.treeItemFactory.getTreeItem(node)
+    }
+
+    /**
+    * Returns the parent of `element`, `null` or `undefined` if `element` is a child of root.
+    * This method must be implemented in order to access {@link TreeView.reveal reveal} API.
+     * @see TreeDataProvider.getParent()
+     */
+    public getParent(element: Node & { branchParent?: Node, parent?: Node }): ProviderResult<Node> {
+        return element.branchParent ?? element.parent
+    }
+
+    /**
+     * Reveals the given element in the tree view.
+     * @see TreeView.reveal()
+     */
+    public focus(element: Node): void {
+        this.view.reveal(element, { select: true, focus: true })
     }
 
     /**

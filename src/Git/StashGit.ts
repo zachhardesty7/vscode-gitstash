@@ -244,4 +244,154 @@ export default class StashGit extends Git {
 
         return this.exec(params, cwd)
     }
+
+    /**
+     * Creates a new stash.
+     */
+    public stash(cwd: string, extra: string[], message?: string) {
+        const params = [
+            'stash',
+            'push',
+            ...extra,
+        ]
+
+        if (message?.length) {
+            params.push('--message', message)
+        }
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Stashes the specified files only.
+     */
+    public push(cwd: string, filePaths: string[], message?: string) {
+        const params = [
+            'stash',
+            'push',
+            '--include-untracked',
+        ]
+
+        if (message?.length) {
+            params.push('--message', message)
+        }
+
+        params.push('--')
+
+        return this.execO(cwd, params.concat(filePaths))
+    }
+
+    /**
+     * Removes the stashes list.
+     */
+    public clear(cwd: string) {
+        const params = [
+            'stash',
+            'clear',
+        ]
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Pops a stash.
+     */
+    public pop(cwd: string, index: number, withIndex: boolean) {
+        const params = [
+            'stash',
+            'pop',
+        ]
+
+        if (withIndex) {
+            params.push('--index')
+        }
+
+        params.push(`stash@{${index}}`)
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Applies a stash.
+     */
+    public apply(cwd: string, index: number, withIndex: boolean) {
+        const params = [
+            'stash',
+            'apply',
+        ]
+
+        if (withIndex) {
+            params.push('--index')
+        }
+
+        params.push(`stash@{${index}}`)
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Branches a stash.
+     */
+    public branch(cwd: string, index: number, name: string) {
+        const params = [
+            'stash',
+            'branch',
+            name,
+            `stash@{${index}}`,
+        ]
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Drops a stash.
+     */
+    public drop(cwd: string, index: number) {
+        const params = [
+            'stash',
+            'drop',
+            `stash@{${index}}`,
+        ]
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Applies changes from a file.
+     */
+    public applySingle(cwd: string, index: number, subPath: string) {
+        const params = [
+            'checkout',
+            `stash@{${index}}`,
+            subPath,
+        ]
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Applies changes from a file.
+     */
+    public createSingle(cwd: string, index: number, subPath: string) {
+        const params = [
+            'checkout',
+            `stash@{${index}}^3`,
+            subPath,
+        ]
+
+        return this.execO(cwd, params)
+    }
+
+    /**
+     * Applies changes from a file.
+     */
+    public statusP2(cwd: string) {
+        const params = [
+            'status',
+            '--porcelain=2',
+            '-z',
+        ]
+
+        return this.execO(cwd, params)
+    }
 }

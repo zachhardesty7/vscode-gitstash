@@ -5,6 +5,11 @@
 
 import Executor from '../Foundation/Executor'
 
+export class Execution {
+    promise!: Promise<string>
+    args!: string[]
+}
+
 export default class extends Executor {
     /**
      * Executes a git command.
@@ -15,5 +20,16 @@ export default class extends Executor {
      */
     public async exec(args: string[], cwd: string, encoding?: BufferEncoding): Promise<string> {
         return this.call('git', args, cwd, encoding)
+    }
+
+    /**
+     * Generates an execution object containing the execution promise and the arguments
+     * used.
+     */
+    public execO(cwd: string, args: string[], encoding?: BufferEncoding): Execution {
+        return {
+            promise: this.call('git', args, cwd, encoding),
+            args,
+        }
     }
 }

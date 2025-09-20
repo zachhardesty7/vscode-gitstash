@@ -6,7 +6,6 @@
 import * as vscode from 'vscode'
 import Config from './Config'
 import FileNode from './StashNode/FileNode'
-import NodeFactory from './StashNode/NodeFactory'
 import RepositoryNode from './StashNode/RepositoryNode'
 import StashGit from './Git/StashGit'
 import StashLabels from './StashLabels'
@@ -37,7 +36,6 @@ export class StashCommands {
     private workspaceGit: WorkspaceGit
     private channel: vscode.OutputChannel
     private stashGit: StashGit
-    private nodeFactory: NodeFactory
     private stashLabels: StashLabels
 
     constructor(config: Config, workspaceGit: WorkspaceGit, channel: vscode.OutputChannel, stashLabels: StashLabels) {
@@ -46,14 +44,13 @@ export class StashCommands {
         this.channel = channel
         this.stashLabels = stashLabels
         this.stashGit = new StashGit()
-        this.nodeFactory = new NodeFactory()
     }
 
     /**
      * Generates a stash.
      */
-    public stash = (repositoryNode: RepositoryNode, type: StashType, message?: string): void => {
-        const params = ['stash', 'push']
+    public stash(repositoryNode: RepositoryNode, type: StashType, message?: string): void {
+        const params = []
 
         switch (type) {
             case StashType.Staged:
@@ -78,11 +75,7 @@ export class StashCommands {
                 break
         }
 
-        if (message?.length) {
-            params.push('--message', message)
-        }
-
-        this.exec(repositoryNode.path, params, 'Stash created', repositoryNode)
+        this.stashGit.stash(repositoryNode.path, params, message)
     }
 
     /**
@@ -91,187 +84,162 @@ export class StashCommands {
      * @param filePaths an array with the list of the file paths to stash
      * @param message   an optional message to set on the stash
      */
-    public push = (filePaths: string[], message?: string): void => {
-        const params = ['stash', 'push', '--include-untracked']
-
-        if (message?.length) {
-            params.push('--message', message)
-        }
-
-        params.push('--')
-
+    public async push(filePaths: string[], message?: string): Promise<void> {
         const paths: (string | null)[] = filePaths
-        void this.workspaceGit.getRepositories().then((repositoryPaths: string[]) => {
-            const repositories: Record<string, string[]> = {}
-            repositoryPaths
-                .sort()
-                .reverse()
-                .forEach((repoPath) => {
+        const repositoryPaths = await this.workspaceGit.getRepositories()
+
+        const repositories: Record<string, string[]> = repositoryPaths
+            .sort()
+            // Reverse so longer paths go first.
+            .reverse()
+            .reduce((repositories: Record<string, string[]>, repoPath: string) => {
+                // Add container for each repo path containing every file whose path
+                // contains the the current repo path.
+                if (!(repoPath in repositories)) {
                     repositories[repoPath] = []
-                    for (let i = 0; i < paths.length; i += 1) {
-                        const filePath = paths[i]
-                        if (filePath?.startsWith(repoPath)) {
-                            repositories[repoPath].push(filePath)
-                            paths[i] = null
-                        }
-                    }
-                })
-
-            Object.entries(repositories).forEach(([repoPath, files]) => {
-                if (files.length) {
-                    const repoNode = this.nodeFactory.createRepositoryNode(repoPath)
-                    this.exec(repoPath, params.concat(files), 'Selected files stashed', repoNode)
                 }
-            })
+                for (let i = 0; i < paths.length; i += 1) {
+                    const filePath = paths[i]
+                    if (filePath?.startsWith(repoPath)) {
+                        repositories[repoPath].push(filePath)
+                        // Remove the file so its not processed on next iterations.
+                        paths[i] = null
+                    }
+                }
+                return repositories
+            }, {})
+
+        Object.entries(repositories).forEach(([repoPath, files]) => {
+            if (files.length) {
+                this.stashGit.push(repoPath, files, message)
+            }
         })
-    }
-
-    /**
-     * Removes the stashes list.
-     */
-    public clear = (repositoryNode: RepositoryNode): void => {
-        const params = ['stash', 'clear']
-
-        this.exec(repositoryNode.path, params, 'Stash list cleared', repositoryNode)
     }
 
     /**
      * Pops a stash.
      */
-    public pop = (stashNode: StashNode, withIndex: boolean): void => {
-        const params = ['stash', 'pop']
-
-        if (withIndex) {
-            params.push('--index')
+    public async pop(stashNode: StashNode, withIndex: boolean): Promise<void> {
+        const exec = this.stashGit.pop(stashNode.path, stashNode.index, withIndex)
+        let output: string
+        try { output = await exec.promise }
+        catch (error) {
+            this.informError(stashNode, exec.args, error)
+            return
         }
 
-        params.push(stashNode.atIndex)
-
-        this.exec(stashNode.path, params, 'Stash popped', stashNode)
+        this.inform(stashNode, exec.args, output, 'Stash popped')
     }
 
     /**
      * Applies a stash.
      */
-    public apply = (stashNode: StashNode, withIndex: boolean): void => {
-        const params = ['stash', 'apply']
-
-        if (withIndex) {
-            params.push('--index')
+    public async apply(stashNode: StashNode, withIndex: boolean): Promise<void> {
+        const exec = this.stashGit.apply(stashNode.path, stashNode.index, withIndex)
+        let output: string
+        try { output = await exec.promise }
+        catch (error) {
+            this.informError(stashNode, exec.args, error)
+            return
         }
 
-        params.push(stashNode.atIndex)
-
-        this.exec(stashNode.path, params, 'Stash applied', stashNode)
+        this.inform(stashNode, exec.args, output, 'Stash applied')
     }
 
     /**
      * Branches a stash.
      */
-    public branch = (stashNode: StashNode, name: string): void => {
-        const params = [
-            'stash',
-            'branch',
-            name,
-            stashNode.atIndex,
-        ]
-
-        this.exec(stashNode.path, params, 'Stash branched', stashNode)
+    public async branch(stashNode: StashNode, name: string): Promise<void> {
+        const exec = this.stashGit.branch(stashNode.path, stashNode.index, name)
+        try {
+            const output = await exec.promise
+            this.inform(stashNode, exec.args, output, 'Stash branched')
+        }
+        catch (error) {
+            this.informError(stashNode, exec.args, error)
+        }
     }
 
     /**
      * Drops a stash.
      */
-    public drop = (stashNode: StashNode): void => {
-        const params = [
-            'stash',
-            'drop',
-            stashNode.atIndex,
-        ]
-
-        this.exec(stashNode.path, params, 'Stash dropped', stashNode)
-    }
-
-    /**
-     * Applies changes from a file.
-     */
-    public applySingle = (fileNode: FileNode): void => {
-        const params = [
-            'checkout',
-            fileNode.parent.atIndex,
-            fileNode.relativePath,
-        ]
-
-        this.exec(fileNode.parent.path, params, 'Changes from file applied', fileNode)
-    }
-
-    /**
-     * Applies changes from a file.
-     */
-    public createSingle = (fileNode: FileNode): void => {
-        const params = [
-            'checkout',
-            `${fileNode.parent.atIndex}^3`,
-            fileNode.relativePath,
-        ]
-
-        this.exec(fileNode.parent.path, params, 'File created', fileNode)
-    }
-
-    /**
-     * Executes the git command.
-     *
-     * @param cwd            the current working directory
-     * @param params         the array of command parameters
-     * @param successMessage the string message to show on success
-     * @param node           the involved node
-     */
-    private exec(
-        cwd: string,
-        params: string[],
-        successMessage: string,
-        node: RepositoryNode | StashNode | FileNode,
-    ): void {
-        this.stashGit.exec(params, cwd)
-            .then(
-                (result: string) => {
-                    const issueType = this.findResultIssues(result)
-
-                    if (issueType === 'conflict') {
-                        this.logResult(node, params, result, NotificationType.Warning, `${successMessage} with conflicts`)
-                    }
-                    else if (issueType === 'empty') {
-                        this.logResult(node, params, result, NotificationType.Message, 'No local changes to save')
-                    }
-                    else {
-                        this.logResult(node, params, result, NotificationType.Message, successMessage)
-                    }
-                },
-                (error: unknown) => {
-                    this.logError(node, params, error)
-                },
-            )
-            .catch((error: unknown) => {
-                this.logError(node, params, error)
-            })
-    }
-
-    /**
-     * Parses the result searching for possible issues / errors.
-     *
-     * @param result the operation result
-     */
-    private findResultIssues(result: string): string | null {
-        for (const line of result.split('\n')) {
-            if (line.startsWith('CONFLICT (content): ')) {
-                return 'conflict'
-            }
-            if (line.startsWith('No local changes to save')) {
-                return 'empty'
-            }
+    public async drop(stashNode: StashNode): Promise<void> {
+        const exec = this.stashGit.drop(stashNode.path, stashNode.index)
+        try {
+            const output = await exec.promise
+            this.inform(stashNode, exec.args, output, 'Stash dropped')
         }
+        catch (error) {
+            this.informError(stashNode, exec.args, error)
+        }
+    }
 
-        return null
+    /**
+     * Applies changes from a file.
+     */
+    public async applySingle(fileNode: FileNode): Promise<void> {
+        const exec = this.stashGit.applySingle(
+            fileNode.parent.path,
+            fileNode.parent.index,
+            fileNode.relativePath,
+        )
+        try {
+            const output = await exec.promise
+            this.inform(fileNode, exec.args, output, 'Changes from file applied')
+        }
+        catch (error) {
+            this.informError(fileNode, exec.args, error)
+        }
+    }
+
+    /**
+     * Applies changes from a file.
+     */
+    public async createSingle(fileNode: FileNode): Promise<void> {
+        const exec = this.stashGit.createSingle(
+            fileNode.parent.path,
+            fileNode.parent.index,
+            fileNode.relativePath,
+        )
+        try {
+            const output = await exec.promise
+            this.inform(fileNode, exec.args, output, 'File created')
+        }
+        catch (error) {
+            this.informError(fileNode, exec.args, error)
+        }
+    }
+
+    /**
+     * Removes the stashes list.
+     */
+    public async clear(repositoryNode: RepositoryNode): Promise<void> {
+        const exec = this.stashGit.clear(repositoryNode.path)
+        try {
+            const output = await exec.promise
+            this.inform(repositoryNode, exec.args, output, 'Stash list cleared')
+        }
+        catch (error) {
+            this.informError(repositoryNode, exec.args, error)
+        }
+    }
+
+    /**
+     * Verifies current state doesn't have any unmerged paths (merge conflicts).
+     */
+    private async noMergeConflicts(cwd: string): Promise<boolean | undefined> {
+        const exec = this.stashGit.statusP2(cwd)
+        try {
+            const output = await exec.promise
+            return undefined !== output
+                .split('\0')
+                .find((entry) => entry.startsWith('u'))
+        }
+        catch (error) {
+            console.error('StashCommands.noMergeConflicts()')
+            console.error(error)
+            return undefined
+        }
     }
 
     /**
@@ -280,41 +248,42 @@ export class StashCommands {
      * @param node             the optional involved node
      * @param params           the git command params
      * @param result           the result content
-     * @param type             the message type
      * @param notificationText the optional notification message
+     * @param type             the message type
      */
-    private logResult(
+    private inform(
         node: RepositoryNode | StashNode | FileNode,
         params: string[],
         result: string,
-        type: NotificationType,
         notificationText: string,
+        type: NotificationType = NotificationType.Message,
     ): void {
-        this.performLogging(node, params, result, type)
+        this.log(node, params, result, type)
 
         if (type !== NotificationType.Message || this.config.get<boolean>('notifications.success.show')) {
-            this.showNotification(notificationText, type)
+            this.notify(notificationText, type)
         }
     }
 
-    private logError(
+    private informError(
         node: RepositoryNode | StashNode | FileNode,
         params: string[],
         error: unknown,
     ) {
+        console.error('StashCommands.informError()')
         console.error(error)
+        console.error('---------')
+
         if (error instanceof Error) {
             const result = error.message
-            this.logResult(node, params, result, NotificationType.Error, result)
+            this.inform(node, params, result, result, NotificationType.Error)
         }
         else {
             let result = 'Unknown error'
-            try {
-                result = JSON.stringify(error)
-            }
+            try { result = JSON.stringify(error) }
             catch { /* empty */ }
             const excerpt = 'An unexpected error happened. See the console for details.'
-            this.logResult(node, params, result, NotificationType.Error, excerpt)
+            this.inform(node, params, result, excerpt, NotificationType.Error)
         }
     }
 
@@ -326,7 +295,7 @@ export class StashCommands {
      * @param result the string result message
      * @param type   the string message type
      */
-    private performLogging(
+    private log(
         node: RepositoryNode | StashNode | FileNode,
         params: string[],
         result: string,
@@ -353,7 +322,7 @@ export class StashCommands {
      * @param information the text to be displayed
      * @param type        the the message type
      */
-    private showNotification(information: string, type: string) {
+    private notify(information: string, type: string) {
         const summary = information.substring(0, 300)
 
         const actions = [{ title: 'Show log' }]

@@ -52,7 +52,7 @@ export class Commands {
             })
             .then((stashMessage) => {
                 if (typeof stashMessage === 'string') {
-                    this.stashCommands.push(paths, stashMessage)
+                    void this.stashCommands.push(paths, stashMessage)
                 }
             })
     }
@@ -266,7 +266,7 @@ export class Commands {
             .then(
                 (option) => {
                     if (typeof option !== 'undefined') {
-                        this.stashCommands.clear(repositoryNode)
+                        void this.stashCommands.clear(repositoryNode)
                     }
                 },
                 (e: unknown) => {
@@ -301,7 +301,7 @@ export class Commands {
         )
             .then((option) => {
                 if (typeof option !== 'undefined') {
-                    this.stashCommands.pop(stashNode, option.withIndex)
+                    void this.stashCommands.pop(stashNode, option.withIndex)
                 }
             })
     }
@@ -332,7 +332,7 @@ export class Commands {
         )
             .then((option) => {
                 if (typeof option !== 'undefined') {
-                    this.stashCommands.apply(stashNode, option.withIndex)
+                    void this.stashCommands.apply(stashNode, option.withIndex)
                 }
             })
     }
@@ -357,7 +357,7 @@ export class Commands {
                         void vscode.window.showErrorMessage('A branch name is required.')
                     }
                     else {
-                        this.stashCommands.branch(stashNode, branchName)
+                        void this.stashCommands.branch(stashNode, branchName)
                     }
                 }
             })
@@ -379,7 +379,7 @@ export class Commands {
             { title: 'Yes' },
         ).then((option) => {
             if (typeof option !== 'undefined') {
-                this.stashCommands.drop(stashNode)
+                void this.stashCommands.drop(stashNode)
             }
         })
     }
@@ -399,7 +399,7 @@ export class Commands {
         )
             .then((option) => {
                 if (typeof option !== 'undefined') {
-                    this.stashCommands.applySingle(fileNode)
+                    void this.stashCommands.applySingle(fileNode)
                 }
             })
     }
@@ -420,7 +420,7 @@ export class Commands {
         )
             .then((option) => {
                 if (typeof option !== 'undefined') {
-                    this.stashCommands.createSingle(fileNode)
+                    void this.stashCommands.createSingle(fileNode)
                 }
             })
     }

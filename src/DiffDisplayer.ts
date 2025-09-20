@@ -142,6 +142,9 @@ export default class {
             })
     }
 
+    /**
+     * Displays a file.
+     */
     private displayFile(file: vscode.Uri, fileNode: FileNode): void {
         vscode.commands.executeCommand('vscode.open', file, {
             preserveFocus: true,

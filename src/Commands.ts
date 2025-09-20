@@ -23,16 +23,12 @@ interface QuickPickStashNodeItem extends vscode.QuickPickItem {
 }
 
 export class Commands {
-    private nodeContainer: NodeContainer
-    private stashCommands: StashCommands
-    private displayer: DiffDisplayer
-    private stashLabels: StashLabels
-
-    constructor(nodeContainer: NodeContainer, stashCommands: StashCommands, diffDisplayer: DiffDisplayer, stashLabels: StashLabels) {
-        this.nodeContainer = nodeContainer
-        this.stashCommands = stashCommands
-        this.displayer = diffDisplayer
-        this.stashLabels = stashLabels
+    constructor(
+        private nodeContainer: NodeContainer,
+        private stashCommands: StashCommands,
+        private displayer: DiffDisplayer,
+        private stashLabels: StashLabels,
+    ) {
     }
 
     /**

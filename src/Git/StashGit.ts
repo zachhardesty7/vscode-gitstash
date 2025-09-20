@@ -259,7 +259,7 @@ export default class StashGit extends Git {
             params.push('--message', message)
         }
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -278,7 +278,7 @@ export default class StashGit extends Git {
 
         params.push('--')
 
-        return this.execO(cwd, params.concat(filePaths))
+        return this.execO(params.concat(filePaths), cwd)
     }
 
     /**
@@ -290,7 +290,7 @@ export default class StashGit extends Git {
             'clear',
         ]
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -308,7 +308,7 @@ export default class StashGit extends Git {
 
         params.push(`stash@{${index}}`)
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -326,7 +326,7 @@ export default class StashGit extends Git {
 
         params.push(`stash@{${index}}`)
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -340,7 +340,7 @@ export default class StashGit extends Git {
             `stash@{${index}}`,
         ]
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -353,7 +353,7 @@ export default class StashGit extends Git {
             `stash@{${index}}`,
         ]
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -366,7 +366,7 @@ export default class StashGit extends Git {
             subPath,
         ]
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -379,7 +379,7 @@ export default class StashGit extends Git {
             subPath,
         ]
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 
     /**
@@ -392,6 +392,6 @@ export default class StashGit extends Git {
             '-z',
         ]
 
-        return this.execO(cwd, params)
+        return this.execO(params, cwd)
     }
 }

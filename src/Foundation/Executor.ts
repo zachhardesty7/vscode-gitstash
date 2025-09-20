@@ -12,14 +12,22 @@ export default class {
      *
      * @param args     the string array with the command and argument list
      * @param cwd      the string with the current working directory
+     * @param env      A dictionary with environment variables
      * @param encoding the BufferEncoding string with the optional encoding to replace utf8
      */
-    protected call(command: string, args: string[], cwd?: string, encoding?: BufferEncoding): Promise<string> {
+    protected call(
+        command: string,
+        args: string[],
+        cwd?: string,
+        env?: Record<string, unknown>,
+        encoding?: BufferEncoding,
+    ): Promise<string> {
         const outBuffer: Buffer[] = []
         const errBuffer: Buffer[] = []
         let error: Error | undefined
+        env ??= {}
 
-        const cmd = spawn(command, args, { cwd })
+        const cmd = spawn(command, args, { cwd, env: env as NodeJS.ProcessEnv })
 
         return new Promise<string>((resolve, reject) => {
             cmd.stdout.on('data', (chunk: Buffer) => outBuffer.push(chunk))

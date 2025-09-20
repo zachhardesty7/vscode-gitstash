@@ -13,10 +13,9 @@ import MessageNode from './Explorer/TreeNode/MessageNode'
 import DirectoryNode from './Explorer/TreeNode/DirectoryNode'
 
 export default class StashLabels {
-    private config: Config
-
-    constructor(config: Config) {
-        this.config = config
+    constructor(
+        private config: Config,
+    ) {
     }
 
     /**

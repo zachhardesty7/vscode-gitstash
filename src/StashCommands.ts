@@ -117,7 +117,12 @@ export class StashCommands {
 
         Object.entries(repositories).forEach(([repoPath, files]) => {
             if (files.length) {
-                this.stashGit.push(repoPath, files, message)
+                const exec = this.stashGit.push(repoPath, files, message)
+                void exec.promise.then((res) => {
+                    console.log('=> push() selected files')
+                    console.log(exec.args)
+                    console.log(res)
+                })
             }
         })
     }

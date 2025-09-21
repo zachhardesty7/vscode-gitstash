@@ -11,6 +11,7 @@ export interface Stash {
     hash: string
     shortHash: string
     subject: string
+    tree: string
     parents: string[]
     note?: string
 }
@@ -60,7 +61,7 @@ export default class StashGit extends Git {
             'stash',
             'list',
             '-z',
-            '--format=%gd%n%ci%n%H%n%h%n%P%n%gs%n%N',
+            '--format=%gd%n%ci%n%H%n%h%n%T%n%P%n%gs%n%N',
         ]
 
         const list = (await this.exec(params, cwd))
@@ -69,7 +70,7 @@ export default class StashGit extends Git {
             .map((rawStash: string) => {
                 const tokens = rawStash.split('\n')
                 const index = tokens[0].replace(/\D/g, '') // stash@{\d+}
-                const note = tokens.length >= 7
+                const note = tokens.length >= 8
                     ? tokens.slice(6).join('\n')
                     : undefined
 
@@ -78,8 +79,9 @@ export default class StashGit extends Git {
                     date: new Date(Date.parse(tokens[1])),
                     hash: tokens[2],
                     shortHash: tokens[3],
-                    parents: tokens[4].split(' '),
-                    subject: tokens[5],
+                    tree: tokens[4],
+                    parents: tokens[5].split(' '),
+                    subject: tokens[6],
                     note,
                 }
             })

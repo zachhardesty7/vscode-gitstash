@@ -46,6 +46,7 @@ export default class NodeFactory {
             stash.date,
             stash.hash,
             stash.shortHash,
+            stash.tree,
             stash.parents,
             message,
             branch,

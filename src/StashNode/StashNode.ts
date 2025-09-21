@@ -15,6 +15,7 @@ export default class StashNode extends Node {
         protected _date: Date,
         protected _hash: string,
         protected _shortHash: string,
+        protected _treeHash: string,
         protected _parentHashes: string[],
         protected _description: string,
         protected _branch?: string,
@@ -80,6 +81,13 @@ export default class StashNode extends Node {
      */
     get shortHash(): string {
         return this._shortHash
+    }
+
+    /**
+     * The hashes of the parents.
+     */
+    get treeHash(): string {
+        return this._treeHash
     }
 
     /**

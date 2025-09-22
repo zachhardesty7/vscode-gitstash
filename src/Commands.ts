@@ -113,7 +113,7 @@ export class Commands {
         void this.runOnRepository(
             repositoryNode,
             (repositoryNode: RepositoryNode) => { this.stashPerform(repositoryNode) },
-            'Create stash',
+            'Create Stash',
         )
     }
 
@@ -126,7 +126,7 @@ export class Commands {
         void this.runOnRepository(
             repositoryNode,
             (repositoryNode: RepositoryNode) => { this.clearPerform(repositoryNode) },
-            'Clear stashes',
+            'Drop All Stashes',
         )
     }
 
@@ -139,7 +139,7 @@ export class Commands {
         this.runOnStash(
             stashNode,
             (stashNode: StashNode) => { this.popPerform(stashNode) },
-            'Stash pop',
+            'Pop Stash',
         )
     }
 
@@ -152,7 +152,7 @@ export class Commands {
         this.runOnStash(
             stashNode,
             (stashNode: StashNode) => { this.applyPerform(stashNode) },
-            'Stash apply',
+            'Apply Stash',
         )
     }
 
@@ -165,7 +165,7 @@ export class Commands {
         this.runOnStash(
             stashNode,
             (stashNode: StashNode) => { this.branchPerform(stashNode) },
-            'Stash branch',
+            'Branch Stash',
         )
     }
 
@@ -178,7 +178,21 @@ export class Commands {
         this.runOnStash(
             stashNode,
             (stashNode: StashNode) => { this.dropPerform(stashNode) },
-            'Stash drop',
+            'Drop stash',
+        )
+    }
+
+    /**
+     * Drops the currently selected stash or selects one and continue.
+     *
+     * @param stashNode the involved node
+     */
+    public multiDrop = (): void => {
+        this.runOnStash(
+            undefined,
+            (...nodes: StashNode[]) => { this.multiDropPerform(...nodes) },
+            'Drop Multiple Stashes',
+            true,
         )
     }
 
@@ -229,12 +243,16 @@ export class Commands {
         ]
 
         void vscode.window
-            .showQuickPick(opts, { placeHolder: `Create stash › ${repositoryLabel} › ...` })
+            .showQuickPick(opts, {
+                title: 'Create Stash',
+                placeHolder: `${repositoryLabel} › ...`,
+            })
             .then((option) => {
                 if (typeof option !== 'undefined') {
                     void vscode.window
                         .showInputBox({
-                            placeHolder: `Create stash › ${repositoryLabel} › ${option.label} › ...`,
+                            title: 'Create Stash',
+                            placeHolder: `${repositoryLabel} › ${option.label} › ...`,
                             prompt: 'Optionally provide a stash message',
                         })
                         .then((stashMessage) => {
@@ -293,13 +311,15 @@ export class Commands {
                     withIndex: true,
                 },
             ],
-            { placeHolder: `Stash pop › ${repositoryLabel} › ${stashLabel} › ...` },
-        )
-            .then((option) => {
-                if (typeof option !== 'undefined') {
-                    this.stashCommands.pop(stashNode, option.withIndex)
-                }
-            })
+            {
+                title: 'Pop Stash',
+                placeHolder: `${repositoryLabel} › ${stashLabel} › ...`,
+            },
+        ).then((option) => {
+            if (typeof option !== 'undefined') {
+                this.stashCommands.pop(stashNode, option.withIndex)
+            }
+        })
     }
 
     /**
@@ -324,7 +344,10 @@ export class Commands {
                     withIndex: true,
                 },
             ],
-            { placeHolder: `Stash apply › ${repositoryLabel} › ${stashLabel} › ...` },
+            {
+                title: 'Apply Stash',
+                placeHolder: `${repositoryLabel} › ${stashLabel} › ...`,
+            },
         )
             .then((option) => {
                 if (typeof option !== 'undefined') {
@@ -344,7 +367,8 @@ export class Commands {
 
         void vscode.window
             .showInputBox({
-                placeHolder: `Stash apply › ${repositoryLabel} › ${stashLabel} › ...`,
+                title: 'Apply Stash',
+                placeHolder: `${repositoryLabel} › ${stashLabel} › ...`,
                 prompt: 'Write a name',
             })
             .then((branchName) => {
@@ -376,6 +400,35 @@ export class Commands {
         ).then((option) => {
             if (typeof option !== 'undefined') {
                 this.stashCommands.drop(stashNode)
+            }
+        })
+    }
+
+    private multiDropPerform = (...nodes: StashNode[]): void => {
+        if (!nodes.length) {
+            vscode.window.showInformationMessage('Nothing to drop.')
+            return
+        }
+
+        const textList = nodes
+            .map((node) => this.stashLabels.getName(node))
+            .join('\n')
+
+        const msg = `Are you sure you want to drop the stashes?\n${textList}`
+
+        void vscode.window.showWarningMessage<vscode.MessageItem>(
+            msg,
+            { modal: true },
+            { title: 'Yes' },
+        ).then((option) => {
+            if (typeof option !== 'undefined') {
+                nodes
+                    // Higher index first.
+                    .sort((a, b) => a.index > b.index ? -1 : (a.index < b.index ? 1 : 0))
+                    .forEach((node) => {
+                        console.log(`Multi-dropping ${node.atIndex}`)
+                        this.stashCommands.drop(node)
+                    })
             }
         })
     }
@@ -500,7 +553,11 @@ export class Commands {
 
         const selection = await vscode.window.showQuickPick<QuickPickRepositoryNodeItem>(
             items,
-            { placeHolder: `${pickerPlaceholder} › ...`, canPickMany: false },
+            {
+                title: pickerPlaceholder,
+                placeHolder: '› Select Repository',
+                canPickMany: false,
+            },
         )
 
         if (selection) {
@@ -557,7 +614,8 @@ export class Commands {
         }
 
         const options = {
-            placeHolder: `${placeholder} › ${repositoryLabel} › ...`,
+            title: placeholder,
+            placeHolder: `${repositoryLabel} › ...`,
             canPickMany,
         }
 

@@ -27,6 +27,7 @@ export default class {
         let error: Error | undefined
         env ??= {}
 
+        const startTime = performance.now()
         const cmd = spawn(command, args, { cwd, env: env as NodeJS.ProcessEnv })
 
         return new Promise<string>((resolve, reject) => {
@@ -43,6 +44,10 @@ export default class {
 
                 const result = Buffer.concat(outBuffer).toString(encoding ?? 'utf8')
                 const errResult = Buffer.concat(errBuffer).toString(encoding ?? 'utf8')
+
+                if (process.env.EXT_DEBUG === '1') {
+                    console.log(`${new Date().toISOString()} > ${command} ${args.join(' ')} [${Math.round(performance.now() - startTime)}ms]`)
+                }
 
                 if (code === 0) {
                     resolve(`${result}${errResult}`)

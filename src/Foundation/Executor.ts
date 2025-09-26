@@ -69,15 +69,14 @@ export function exec(
 
                 const result = Buffer.concat(outBuffer).toString(encoding)
                 const errResult = Buffer.concat(errBuffer).toString(encoding)
+                const execTime = Math.round(performance.now() - startTime)
 
                 if (process.env.EXT_DEBUG === '1') {
-                    console.log(`${new Date().toISOString()} > ${command} ${args.join(' ')} [${Math.round(performance.now() - startTime)}ms]`)
+                    console.log(`${new Date().toISOString()} > ${command} ${args.join(' ')} [${execTime}ms]`)
                 }
 
                 if (code === 0) {
-                    resolve(new ExeResult(
-                        result, errResult, Math.round(performance.now() - startTime),
-                    ))
+                    resolve(new ExeResult(result, errResult, execTime))
                 }
                 else {
                     reject(new ExecError(code, errResult, result))

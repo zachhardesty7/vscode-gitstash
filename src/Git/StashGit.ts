@@ -3,7 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import Git from './Git'
+import Git, { ExeResult } from './Git'
 
 export interface Stash {
     index: number
@@ -47,7 +47,7 @@ export default class StashGit extends Git {
             '--format=%h',
         ]
 
-        return (await this.exec(params, cwd)).trim() || null
+        return (await this.exec(params, cwd).promise).out.trim() || null
     }
 
     /**
@@ -64,7 +64,7 @@ export default class StashGit extends Git {
             '--format=%gd%n%ci%n%H%n%h%n%T%n%P%n%gs%n%N',
         ]
 
-        const list = (await this.exec(params, cwd))
+        const list = (await this.exec(params, cwd).promise).out
             .split('\0')
             .filter((rawStash: string) => rawStash.trim().length)
             .map((rawStash: string) => {
@@ -116,7 +116,7 @@ export default class StashGit extends Git {
         ]
 
         try {
-            const stashData = (await this.exec(params, cwd)).trim()
+            const stashData = (await this.exec(params, cwd).promise).out.trim()
 
             if (stashData.length > 0) {
                 const stashedFiles = stashData.split(/\r?\n/g)
@@ -171,7 +171,7 @@ export default class StashGit extends Git {
             `stash@{${index}}^3`,
         ]
 
-        return (await this.exec(params, cwd))
+        return (await this.exec(params, cwd).promise).out
             .trim()
             .split('\0')
             .filter((entry) => entry.length)
@@ -189,13 +189,17 @@ export default class StashGit extends Git {
      * @param index the int with the index of the parent stash
      * @param file  the string with the stashed file name
      */
-    public async getStashContents(cwd: string, index: number, file: string): Promise<string> {
+    public async getStashContents(
+        cwd: string,
+        index: number,
+        file: string,
+    ): Promise<ExeResult> {
         const params = [
             'show',
             `stash@{${index}}:${file}`,
         ]
 
-        return this.exec(params, cwd)
+        return this.exec(params, cwd).promise
     }
 
     /**
@@ -210,13 +214,17 @@ export default class StashGit extends Git {
      * @param index the int with the index of the parent stash
      * @param file  the string with the stashed file name
      */
-    public async getParentContents(cwd: string, index: number, file: string): Promise<string> {
+    public async getParentContents(
+        cwd: string,
+        index: number,
+        file: string,
+    ): Promise<ExeResult> {
         const params = [
             'show',
             `stash@{${index}}^1:${file}`,
         ]
 
-        return this.exec(params, cwd)
+        return this.exec(params, cwd).promise
     }
 
     /**
@@ -226,13 +234,17 @@ export default class StashGit extends Git {
      * @param index the int with the index of the parent stash
      * @param file  the string with the stashed file name
      */
-    public async getThirdParentContents(cwd: string, index: number, file: string): Promise<string> {
+    public async getThirdParentContents(
+        cwd: string,
+        index: number,
+        file: string,
+    ): Promise<ExeResult> {
         const params = [
             'show',
             `stash@{${index}}^3:${file}`,
         ]
 
-        return this.exec(params, cwd)
+        return this.exec(params, cwd).promise
     }
 
     // -------------------------------------------------------------------------
@@ -251,7 +263,7 @@ export default class StashGit extends Git {
             params.push('--message', message)
         }
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -270,7 +282,7 @@ export default class StashGit extends Git {
 
         params.push('--')
 
-        return this.execO(params.concat(filePaths), cwd)
+        return this.exec(params.concat(filePaths), cwd)
     }
 
     /**
@@ -282,7 +294,7 @@ export default class StashGit extends Git {
             'clear',
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -300,7 +312,7 @@ export default class StashGit extends Git {
 
         params.push(`stash@{${index}}`)
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -318,7 +330,7 @@ export default class StashGit extends Git {
 
         params.push(`stash@{${index}}`)
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -332,7 +344,7 @@ export default class StashGit extends Git {
             `stash@{${index}}`,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -345,7 +357,7 @@ export default class StashGit extends Git {
             `stash@{${index}}`,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -358,7 +370,7 @@ export default class StashGit extends Git {
             subPath,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -371,7 +383,7 @@ export default class StashGit extends Git {
             subPath,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -384,6 +396,6 @@ export default class StashGit extends Git {
             '-z',
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 }

@@ -6,36 +6,56 @@
 import ExecError from './ExecError'
 import { spawn } from 'child_process'
 
+/**
+ * An Execution, containing the execution promise and the command arguments used.
+ */
 export class Execution {
-    promise!: Promise<string>
     args!: string[]
+    promise!: Promise<ExeResult>
 }
 
-export default class {
-    /**
-     * Executes a command.
-     *
-     * @param args     the string array with the command and argument list
-     * @param cwd      the string with the current working directory
-     * @param env      A dictionary with environment variables
-     * @param encoding the BufferEncoding string with the optional encoding to replace utf8
-     */
-    protected call(
-        command: string,
-        args: string[],
-        cwd?: string,
-        env?: Record<string, unknown>,
-        encoding?: BufferEncoding,
-    ): Promise<string> {
-        const outBuffer: Buffer[] = []
-        const errBuffer: Buffer[] = []
-        let error: Error | undefined
-        env ??= {}
+/**
+ * An Execution Result, containing the output and the error output.
+ */
+export class ExeResult {
+    constructor(
+        public stdout: string | undefined,
+        public stderr: string | undefined,
+        /** Execution time (ms). */
+        public time: number,
+    ) {
+    }
 
-        const startTime = performance.now()
-        const cmd = spawn(command, args, { cwd, env: env as NodeJS.ProcessEnv })
+    get out() { return `${this.stdout}${this.stderr}` }
+}
 
-        return new Promise<string>((resolve, reject) => {
+/**
+ * Executes a command.
+ *
+ * @param args     the string array with the command and argument list
+ * @param cwd      the string with the current working directory
+ * @param env      A dictionary with environment variables
+ * @param encoding the BufferEncoding string with the optional encoding to replace utf8
+ */
+export function exec(
+    command: string,
+    args: string[],
+    cwd?: string,
+    env?: Record<string, unknown>,
+    encoding?: BufferEncoding,
+): Execution {
+    const outBuffer: Buffer[] = []
+    const errBuffer: Buffer[] = []
+    let error: Error | undefined
+    env ??= {}
+    encoding ??= 'utf8'
+
+    const startTime = performance.now()
+    const cmd = spawn(command, args, { cwd, env: env as NodeJS.ProcessEnv })
+
+    return {
+        args,
+        promise: new Promise<ExeResult>((resolve, reject) => {
             cmd.stdout.on('data', (chunk: Buffer) => outBuffer.push(chunk))
             cmd.stderr.on('data', (chunk: Buffer) => errBuffer.push(chunk))
             cmd.once('error', (err: Error) => error = err)
@@ -47,37 +67,22 @@ export default class {
                     return
                 }
 
-                const result = Buffer.concat(outBuffer).toString(encoding ?? 'utf8')
-                const errResult = Buffer.concat(errBuffer).toString(encoding ?? 'utf8')
+                const result = Buffer.concat(outBuffer).toString(encoding)
+                const errResult = Buffer.concat(errBuffer).toString(encoding)
 
                 if (process.env.EXT_DEBUG === '1') {
                     console.log(`${new Date().toISOString()} > ${command} ${args.join(' ')} [${Math.round(performance.now() - startTime)}ms]`)
                 }
 
                 if (code === 0) {
-                    resolve(`${result}${errResult}`)
+                    resolve(new ExeResult(
+                        result, errResult, Math.round(performance.now() - startTime),
+                    ))
                 }
                 else {
                     reject(new ExecError(code, errResult, result))
                 }
             })
-        })
-    }
-
-    /**
-     * Generates an execution object containing the execution promise and the arguments
-     * used.
-     */
-    protected callObj(
-        command: string,
-        args: string[],
-        cwd?: string,
-        env?: Record<string, unknown>,
-        encoding?: BufferEncoding,
-    ): Execution {
-        return {
-            promise: this.call(command, args, cwd, env, encoding),
-            args,
-        }
+        }),
     }
 }

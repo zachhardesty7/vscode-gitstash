@@ -9,33 +9,32 @@ export default class BranchGit extends Git {
     /**
      * Gets the branches.
      */
-    public getBranches(cwd: string): Execution {
+    public getBranches(cwd: string): Promise<string[]> {
         const params = [
             'for-each-ref',
             '--format=%(refname)',
             'refs/heads/',
         ]
 
-        const exec = this.execO(params, cwd)
-        exec.promise = exec.promise.then(
-            (result) => result.replaceAll('refs/heads/', '').trim(),
+        return this.exec(params, cwd).promise.then((result) =>
+            result.out
+                .replaceAll('refs/heads/', '')
+                .trim()
+                .split(/\r?\n/g),
         )
-        return exec
     }
 
     /**
      * Gets the current branch.
      */
-    public currentBranch(cwd: string): Execution {
+    public currentBranch(cwd: string): Promise<string> {
         const params = [
             'rev-parse',
             '--abbrev-ref',
             'HEAD',
         ]
 
-        const exec = this.execO(params, cwd)
-        exec.promise = exec.promise.then((result) => result.trim())
-        return exec
+        return this.exec(params, cwd).promise.then((result) => result.out.trim())
     }
 
     /**
@@ -47,6 +46,6 @@ export default class BranchGit extends Git {
             branch,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 }

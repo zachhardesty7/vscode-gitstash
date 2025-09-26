@@ -404,8 +404,7 @@ export class Commands {
         )
 
         try {
-            this.previousBranch = await this.branchGit
-                .currentBranch(repositoryNode.path).promise
+            this.previousBranch = await this.branchGit.currentBranch(repositoryNode.path)
         }
         catch { /* empty */ }
 
@@ -573,11 +572,10 @@ export class Commands {
         if (!repositoryNode) { return }
 
         const repositoryLabel = this.stashLabels.getName(repositoryNode)
-        let list = (await this.branchGit.getBranches(repositoryNode.path).promise)
-            .split(/\r?\n/g)
+        let list = await this.branchGit.getBranches(repositoryNode.path)
 
         if (filterCurrent) {
-            const current = await this.branchGit.currentBranch(repositoryNode.path).promise
+            const current = await this.branchGit.currentBranch(repositoryNode.path)
             list = list.filter((branch) => branch !== current)
         }
 

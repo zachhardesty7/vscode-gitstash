@@ -153,8 +153,14 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.editor.diffTitleFormat`                         | Specifies the format for the diff editor title |
 | `gitstash.log.autoclear`                                  | Clears the log window before showing the action result |
 | `gitstash.notifications.success.show`                     | Shows a notification on a successful execution |
+| `gitstash.advanced.debugEnabled`                          | Enables debug logging to the developer console |
 | `gitstash.advanced.repositorySearchDepth`                 | Search depth for finding repositories on subdirectories |
 | `gitstash.advanced.ignoredDirectories`                    | Directories to ignore when searching in depth |
+
+
+## Bugs?
+
+If you find a bug, please enable the debug mode just by switching the corresponding setting, this will sent debug messages to the developer console which can give some context when the issue occurs. The more information is provided to reproduce the easier it will be to solve it. You can refer to the [bug-report](https://github.com/artrz/vsx-gitstash/blob/main/.github/ISSUE_TEMPLATE/bug-report.md) template for a guide.
 
 
 ## Tips

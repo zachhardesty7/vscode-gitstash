@@ -3,6 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
+import './_global'
 import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, workspace } from 'vscode'
 import { Commands } from './Commands'
 import BranchGit from './Git/BranchGit'
@@ -29,6 +30,7 @@ export function activate(context: ExtensionContext): void {
     const channelName = packJson.displayName
 
     const config = new Config(configPrefix)
+    global.setDebug(config.get<boolean>(config.key.advancedDebugEnabled))
 
     const logChannel = new LogChannel(channelName)
     const gitCallback = (exec: Execution) => {
@@ -81,6 +83,7 @@ export function activate(context: ExtensionContext): void {
             treeProvider.reload('update', projectDirectory)
         },
     )
+    global.dbg('[boot] FS Watcher created')
 
     context.subscriptions.push(
         new TreeDecorationProvider(config),
@@ -138,6 +141,7 @@ export function activate(context: ExtensionContext): void {
         workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
             if (e.affectsConfiguration('gitstash')) {
                 config.reload()
+                global.setDebug(config.get<boolean>(config.key.advancedDebugEnabled))
                 treeProvider.reload('settings')
             }
         }),
@@ -146,6 +150,8 @@ export function activate(context: ExtensionContext): void {
     )
 
     treeProvider.toggle()
+
+    global.dbg(`[boot] 🚀 ${channelName} started`)
 }
 
 /**
@@ -154,5 +160,8 @@ export function activate(context: ExtensionContext): void {
 function notifyHasRepository(workspaceGit: WorkspaceGit) {
     void workspaceGit
         .hasGitRepository()
-        .then((has) => commands.executeCommand('setContext', 'hasGitRepository', has))
+        .then((has) => {
+            commands.executeCommand('setContext', 'hasGitRepository', has)
+            global.dbg(`[state] setContext('hasGitRepository', ${has})`)
+        })
 }

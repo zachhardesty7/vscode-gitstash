@@ -6,9 +6,14 @@
 export default class ExecError extends Error {
     constructor(
         public code: number,
-        public errorMessage: string,
-        public context?: string,
+        public stderr: string,
+        public stdout?: string,
+        public cause?: Error,
     ) {
-        super(`${errorMessage}${context}`.trim())
+        super(`${stderr}${stdout}`.trim(), { cause })
+    }
+
+    static fromError(code: number, error: Error): ExecError {
+        return new ExecError(code, `[ExErr] ${error.message}`, undefined, error)
     }
 }

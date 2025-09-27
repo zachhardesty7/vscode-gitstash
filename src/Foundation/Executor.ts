@@ -32,9 +32,10 @@ export class ExeResult {
 /**
  * Executes a command.
  *
- * @param args     the string array with the command and argument list
+ * @param command  the string with the command to execute
+ * @param args     the string array with the argument list
  * @param cwd      the string with the current working directory
- * @param env      A dictionary with environment variables
+ * @param env      a dictionary with environment variables
  * @param encoding the BufferEncoding string with the optional encoding to replace utf8
  */
 export function exec(
@@ -63,12 +64,12 @@ export function exec(
                 cmd.removeAllListeners()
 
                 if (error) {
-                    reject(new ExecError(code, error.message))
+                    reject(ExecError.fromError(code, error))
                     return
                 }
 
-                const result = Buffer.concat(outBuffer).toString(encoding)
-                const errResult = Buffer.concat(errBuffer).toString(encoding)
+                const stdout = Buffer.concat(outBuffer).toString(encoding)
+                const stderr = Buffer.concat(errBuffer).toString(encoding)
                 const execTime = Math.round(performance.now() - startTime)
 
                 if (process.env.EXT_DEBUG === '1') {
@@ -76,10 +77,10 @@ export function exec(
                 }
 
                 if (code === 0) {
-                    resolve(new ExeResult(result, errResult, execTime))
+                    resolve(new ExeResult(stdout, stderr, execTime))
                 }
                 else {
-                    reject(new ExecError(code, errResult, result))
+                    reject(new ExecError(code, stderr, stdout))
                 }
             })
         }),

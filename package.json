@@ -47,7 +47,7 @@
     "contributes": {
         "configuration": {
             "type": "object",
-            "title": "GitStash",
+            "title": "Git Stash",
             "properties": {
                 "gitstash.advanced.debugEnabled": {
                     "type": "boolean",

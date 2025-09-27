@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get the tag without prefix
-        run: echo "GIT_TAG=`echo ${GITHUB_REF_NAME} | cut -c 2-6`" >> $GITHUB_ENV
+        run: echo "GIT_TAG=`echo ${GITHUB_REF_NAME} | cut -c2-`" >> $GITHUB_ENV
 
       - name: Set the extension filename
         run: echo "EXT_NAME=gitstash-${GIT_TAG}.vsix" >> $GITHUB_ENV

@@ -4,24 +4,24 @@
  */
 
 import './_global'
-import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, workspace } from 'vscode'
+import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, window, workspace } from 'vscode'
 import { Commands } from './Commands'
-import BranchGit from './Git/BranchGit'
 import Config from './Config'
 import DiffDisplayer from './DiffDisplayer'
 import DocumentContentProvider from './Document/DocumentContentProvider'
 import FileNode from './StashNode/FileNode'
 import FileSystemWatcherManager from './FileSystemWatcherManager'
+import GitBranch from './Git/GitBranch'
+import GitStash from './Git/GitStash'
+import GitWorkspace from './Git/GitWorkspace'
 import NodeContainer from './Explorer/TreeNode/NodeContainer'
 import { Execution } from './Foundation/Executor'
 import { LogChannel } from './LogChannel'
 import { StashCommands } from './StashCommands'
-import StashGit from './Git/StashGit'
 import StashLabels from './StashLabels'
 import TreeDataProvider from './Explorer/TreeDataProvider'
 import TreeDecorationProvider from './Explorer/TreeDecorationProvider'
 import UriGenerator from './UriGenerator'
-import WorkspaceGit from './Git/WorkspaceGit'
 
 export function activate(context: ExtensionContext): void {
     const packJson = context.extension.packageJSON as { name: string, displayName: string }
@@ -34,6 +34,7 @@ export function activate(context: ExtensionContext): void {
 
     const logChannel = new LogChannel(channelName)
     const gitCallback = (exec: Execution) => {
+        // Attach the logger to the git command callback.
         exec.promise = exec.promise
             .then((exeResult) => {
                 if (config.get<boolean>(config.key.logAutoclear)) {
@@ -48,13 +49,13 @@ export function activate(context: ExtensionContext): void {
             })
     }
 
-    const wsGit = new WorkspaceGit(config, gitCallback)
-    const wsGit2 = new WorkspaceGit(config, gitCallback)
-    const stashGit = new StashGit(gitCallback)
-    const stashGit2 = new StashGit(gitCallback)
-    const stashGit3 = new StashGit(gitCallback)
-    const branchGit = new BranchGit(gitCallback)
-    const branchGit2 = new BranchGit(gitCallback)
+    const wsGit = new GitWorkspace(config, gitCallback)
+    const wsGit2 = new GitWorkspace(config, gitCallback)
+    const stashGit = new GitStash(gitCallback)
+    const stashGit2 = new GitStash(gitCallback)
+    const stashGit3 = new GitStash(gitCallback)
+    const branchGit = new GitBranch(gitCallback)
+    const branchGit2 = new GitBranch(gitCallback)
 
     notifyHasRepository(wsGit2)
 
@@ -77,9 +78,17 @@ export function activate(context: ExtensionContext): void {
         branchGit2,
     )
 
+    // Attach and error handler to notify the user if unable to get the repositories.
+    const repos = wsGit2.getRepositories().catch((value: unknown) => {
+        const msg = value instanceof Error ? value.message : JSON.stringify(value)
+        window.showErrorMessage(msg)
+        throw value
+    })
+
     const watcherManager = new FileSystemWatcherManager(
-        wsGit2.getRepositories(),
+        repos,
         (projectDirectory: Uri) => {
+            global.dbg(`[Watch] Reloading explorer (${projectDirectory.fsPath})...`)
             treeProvider.reload('update', projectDirectory)
         },
     )
@@ -157,8 +166,8 @@ export function activate(context: ExtensionContext): void {
 /**
  * Checks if there is at least one git repository open and notifies it to vsc.
  */
-function notifyHasRepository(workspaceGit: WorkspaceGit) {
-    void workspaceGit
+function notifyHasRepository(gitWorkspace: GitWorkspace) {
+    void gitWorkspace
         .hasGitRepository()
         .then((has) => {
             commands.executeCommand('setContext', 'hasGitRepository', has)

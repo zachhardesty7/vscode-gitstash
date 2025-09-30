@@ -2,7 +2,7 @@
     "name": "gitstash",
     "displayName": "Git Stash",
     "description": "Integrate stashes management into your editor. Browse entries, review and extract changes, and more.",
-    "version": "6.11.0",
+    "version": "6.11.1",
     "publisher": "arturock",
     "author": {
         "name": "Arturo Rodríguez"

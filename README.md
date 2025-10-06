@@ -15,7 +15,7 @@
 
 [![Sponsoring](https://img.shields.io/badge/-black?style=social&logo=&label=☕%20%20%20Buy%20me%20a%20Coffee)](https://ko-fi.com/artrz)
 <br>
-Like the extension? You can support me with a coffee ☕.
+Is this extension helpful for you? I kindly ask you to consider supporting me if you're able to, I will mean the world to me ❤️. Regardless, happy coding!
 
 ## Features
 

@@ -10,4 +10,5 @@ updates:
     schedule:
       interval: "quarterly"
     ignore:
+      - dependency-name: "@types/node"
       - dependency-name: "@types/vscode"

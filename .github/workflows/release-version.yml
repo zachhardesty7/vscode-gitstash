@@ -8,12 +8,14 @@ on:
 env:
   # These variables are redefined
   GIT_TAG: 0.0.0
-  EXT_NAME: extension.vsix
+  EXT_NAME: gitstash.vsix
 
 jobs:
   release:
     name: publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Get the tag without prefix
         run: echo "GIT_TAG=`echo ${GITHUB_REF_NAME} | cut -c2-`" >> $GITHUB_ENV

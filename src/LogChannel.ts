@@ -6,6 +6,7 @@
 import { OutputChannel, window } from 'vscode'
 import { toDateTimeIso } from './DateFormat'
 import { ExeResult } from './Git/Git'
+import ExecError from './Foundation/ExecError'
 
 export class LogChannel {
     private channel: OutputChannel
@@ -15,7 +16,7 @@ export class LogChannel {
     }
 
     public logExeResult(args: string[], exeResult: ExeResult) {
-        const currentTime = toDateTimeIso(new Date()).substring(0, 19)
+        const currentTime = toDateTimeIso(new Date(), false, true)
         const cmd = `git ${args.join(' ')}`
 
         this.appendLine(`${currentTime} > ${cmd} [${exeResult.time}ms]`)
@@ -23,12 +24,13 @@ export class LogChannel {
     }
 
     public logExeError(args: string[], error: unknown) {
-        const currentTime = toDateTimeIso(new Date()).substring(0, 19)
+        const currentTime = toDateTimeIso(new Date(), false, true)
         const cmd = `git ${args.join(' ')}`
 
         const err = error instanceof Error ? error.message : JSON.stringify(error)
+        const code = error instanceof ExecError ? error.code : 'n/a'
 
-        this.appendLine(`${currentTime} > ${cmd}`)
+        this.appendLine(`${currentTime} > ${cmd} (err:${code})`)
         this.appendLine(err)
     }
 

@@ -15,7 +15,7 @@ jobs:
     name: publish
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Get the tag without prefix
         run: echo "GIT_TAG=`echo ${GITHUB_REF_NAME} | cut -c2-`" >> $GITHUB_ENV

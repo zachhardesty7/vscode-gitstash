@@ -6,9 +6,10 @@ on:
     - 'v*.*.*'
 
 env:
-  # These variables are redefined
+  # Declare variables so they are correctly identified later.
+  # These will be redefined before being actually used.
+  EXT_NAME: gitstash
   GIT_TAG: 0.0.0
-  EXT_NAME: gitstash.vsix
 
 jobs:
   release:

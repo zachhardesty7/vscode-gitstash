@@ -79,8 +79,8 @@ export default class {
         const currentFileUri = vscode.Uri.file(current)
 
         const diffDataUri = fileNode.type === NodeType.Modified || fileNode.type === NodeType.Renamed
-            ? await this.uriGenerator.createForDiff(fileNode, compareChanges ? FileStage.Change : FileStage.Parent)
-            : await this.uriGenerator.createForDiff(fileNode)
+            ? await this.uriGenerator.createForDiffCurrent(fileNode, compareChanges ? FileStage.Change : FileStage.Parent)
+            : await this.uriGenerator.createForDiffCurrent(fileNode)
 
         return currentAsParent
             ? this.displayDiff(currentFileUri, diffDataUri, fileNode, false)

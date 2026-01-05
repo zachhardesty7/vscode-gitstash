@@ -3,8 +3,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as tmp from 'tmp'
+import * as vscode from 'vscode'
 import { FileStage } from './Git/StashGit'
 import GitBridge from './GitBridge'
+import type { GitExtension } from './git'
 import StashNode from './StashNode/StashNode'
 import { Uri } from 'vscode'
 
@@ -58,6 +60,29 @@ export default class UriGenerator {
         }
 
         return this.generateUri(node, stage)
+    }
+
+    /**
+     * Creates a node Uri to be used on the diff view when comparing to or from current files.
+     *
+     * @param node  the node to be used as base for the URI
+     * @param stage the file stash stage
+     */
+    public async createForDiffCurrent(node: StashNode, stage?: FileStage): Promise<Uri> {
+        if (this.supportedBinaryFiles.indexOf(path.extname(node.name)) > -1) {
+            return Uri.file(
+                this.createTmpFile(
+                    await this.gitBridge.getFileContents(node, stage),
+                    node.name,
+                ).name,
+            )
+        }
+
+        const gitExtension =
+            vscode.extensions.getExtension<GitExtension>('vscode.git')?.exports
+        const git = gitExtension?.getAPI(1)
+
+        return git.toGitUri(Uri.parse(`file://${node.path}`), node.parent.hash)
     }
 
     /**

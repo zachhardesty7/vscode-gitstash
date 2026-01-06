@@ -7,7 +7,8 @@ import * as vscode from 'vscode'
 import FileNode from './StashNode/FileNode'
 import { FileStage } from './Git/GitStash'
 import StashLabels from './StashLabels'
-import UriGenerator from './UriGenerator'
+import UriGenerator, { toGitUri } from './UriGenerator'
+import type StashNode from './StashNode/StashNode'
 
 class DiffResource {
     originalUri: vscode.Uri | undefined
@@ -24,6 +25,30 @@ export default class {
         private uriGenerator: UriGenerator,
         private stashLabels: StashLabels,
     ) {
+    }
+
+    /**
+     * Shows a multi-diff of each file in stash.
+     */
+    public async showMultiDiff(stashNode: StashNode): Promise<void> {
+        const title = `Git Stash #${stashNode.index}: ${stashNode.description}`
+        const multiDiffSourceUri = toGitUri(
+            vscode.Uri.file(stashNode.parent.path),
+            `stash@{${stashNode.index}}`,
+            { scheme: 'git-stash' },
+        )
+
+        const resources = await Promise.all(
+            (stashNode.children ?? []).map((fileNode) => {
+                return this.diffResource(fileNode)
+            }),
+        )
+
+        vscode.commands.executeCommand('_workbench.openMultiDiffEditor', {
+            multiDiffSourceUri,
+            title,
+            resources,
+        })
     }
 
     /**

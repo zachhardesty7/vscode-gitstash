@@ -197,6 +197,18 @@ export class Commands {
     }
 
     /**
+     * Shows a multi-diff of each file in selected stash or selects one and continue.
+     *
+     * @param stashNode the involved node
+     */
+    public view = async (stashNode?: StashNode): Promise<void> => {
+        stashNode ??= await this.pickStash(undefined, 'View Stash')
+        if (!stashNode) { return }
+
+        await this.displayer.showMultiDiff(stashNode)
+    }
+
+    /**
      * Pops the selected stash or selects one and continue.
      *
      * @param stashNode the involved node

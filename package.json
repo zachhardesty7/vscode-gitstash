@@ -331,6 +331,12 @@
                 "category": "GitStash"
             },
             {
+                "command": "gitstash.view",
+                "title": "View full stash...",
+                "category": "GitStash",
+                "icon": "$(request-changes)"
+            },
+            {
                 "command": "gitstash.pop",
                 "title": "Pop...",
                 "category": "GitStash",
@@ -497,6 +503,10 @@
                 {
                     "command": "gitstash.openDir",
                     "when": "false"
+                },
+                {
+                    "command": "gitstash.view",
+                    "when": "hasGitRepository"
                 },
                 {
                     "command": "gitstash.pop",

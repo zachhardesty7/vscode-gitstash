@@ -127,6 +127,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
         commands.registerCommand('gitstash.clear', stashCommands.clear),
         commands.registerCommand('gitstash.openDir', stashCommands.openDir),
 
+        commands.registerCommand('gitstash.view', stashCommands.view),
         commands.registerCommand('gitstash.show', stashCommands.diff),
         commands.registerCommand('gitstash.diffChangesCurrent', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffChangesCurrent(node) }),
         commands.registerCommand('gitstash.diffCurrentChanges', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffCurrentChanges(node) }),

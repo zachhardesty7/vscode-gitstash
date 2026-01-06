@@ -12,6 +12,52 @@ import { FileStage } from './Git/GitStash'
 import NodeContainer from './StashNode/NodeContainer'
 import { Uri } from 'vscode'
 
+export interface GitUriParams {
+    path: string
+    ref: string
+    submoduleOf?: string
+}
+
+export interface GitUriOptions {
+    scheme?: string
+    replaceFileExtension?: boolean
+    submoduleOf?: string
+}
+
+/**
+ * copied from [VSCode's git
+ * extension](https://github.com/microsoft/vscode/blob/5a569e3461c842f836e0dd003ea4203c60464be2/extensions/git/src/uri.ts#L32-L51)
+ *
+ * can't use directly via `vscode.extensions.getExtension<GitExtension>('vscode.git')`
+ * because [the exported API is missing the 3rd
+ * param](https://github.com/microsoft/vscode/blob/5a569e3461c842f836e0dd003ea4203c60464be2/extensions/git/src/api/api1.ts#L401-L403)
+ */
+export function toGitUri(uri: Uri, ref: string, options: GitUriOptions = {}): Uri {
+    const params: GitUriParams = {
+        path: uri.fsPath,
+        ref,
+    }
+
+    if (options.submoduleOf) {
+        params.submoduleOf = options.submoduleOf
+    }
+
+    let { path } = uri
+
+    if (options.replaceFileExtension) {
+        path = `${path}.git`
+    }
+    else if (options.submoduleOf) {
+        path = `${path}.diff`
+    }
+
+    return uri.with({
+        scheme: options.scheme ?? 'git',
+        path,
+        query: JSON.stringify(params),
+    })
+}
+
 export default class UriGenerator {
     public static readonly fileScheme = 'git-stash-file-content'
     private readonly supportedBinaryFiles = [

@@ -205,6 +205,9 @@ export class Commands {
         stashNode ??= await this.pickStash(undefined, 'View Stash')
         if (!stashNode) { return }
 
+        // required to load the files in the stash
+        await this.nodeContainer.getFiles(stashNode)
+
         await this.displayer.showMultiDiff(stashNode)
     }
 

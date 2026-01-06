@@ -636,6 +636,11 @@
                     "group": "menu@2"
                 },
                 {
+                    "command": "gitstash.view",
+                    "when": "view == gitstash.explorer && viewItem == stash",
+                    "group": "inline@0"
+                },
+                {
                     "command": "gitstash.apply",
                     "when": "view == gitstash.explorer && viewItem == stash",
                     "group": "inline@1"
@@ -643,12 +648,12 @@
                 {
                     "command": "gitstash.pop",
                     "when": "view == gitstash.explorer && viewItem == stash",
-                    "group": "inline@1"
+                    "group": "inline@2"
                 },
                 {
                     "command": "gitstash.drop",
                     "when": "view == gitstash.explorer && viewItem == stash",
-                    "group": "inline@2"
+                    "group": "inline@3"
                 },
                 {
                     "command": "gitstash.branch",

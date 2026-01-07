@@ -24,6 +24,7 @@ import StashLabels from './StashLabels'
 import TreeDataProvider from './Explorer/TreeDataProvider'
 import TreeDecorationProvider from './Explorer/TreeDecorationProvider'
 import UriGenerator from './UriGenerator'
+import type StashNode from './StashNode/StashNode'
 
 export async function activate(context: ExtensionContext): Promise<void> {
     // Get data from the package file.
@@ -133,6 +134,22 @@ export async function activate(context: ExtensionContext): Promise<void> {
         commands.registerCommand('gitstash.diffCurrentChanges', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffCurrentChanges(node) }),
         commands.registerCommand('gitstash.diffSourceCurrent', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffSourceCurrent(node) }),
         commands.registerCommand('gitstash.diffCurrentSource', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffCurrentSource(node) }),
+        commands.registerCommand('gitstash.diffChangesCurrentAll', async (node: StashNode) => {
+            treeProvider.focus(node)
+            await stashCommands.diffChangesCurrentAll(node)
+        }),
+        commands.registerCommand('gitstash.diffCurrentChangesAll', async (node: StashNode) => {
+            treeProvider.focus(node)
+            await stashCommands.diffCurrentChangesAll(node)
+        }),
+        commands.registerCommand('gitstash.diffSourceCurrentAll', async (node: StashNode) => {
+            treeProvider.focus(node)
+            await stashCommands.diffSourceCurrentAll(node)
+        }),
+        commands.registerCommand('gitstash.diffCurrentSourceAll', async (node: StashNode) => {
+            treeProvider.focus(node)
+            await stashCommands.diffCurrentSourceAll(node)
+        }),
 
         commands.registerCommand('gitstash.pop', stashCommands.pop),
         commands.registerCommand('gitstash.apply', stashCommands.apply),

@@ -71,6 +71,38 @@ export default class {
     }
 
     /**
+     * Shows a multi-diff of each file in stash.
+     *
+     * @param stashNode      the node for the stashed file
+     * @param sourceFile     compare changes or the changes' parent
+     * @param sourceFileSide show node's file at left or right
+     */
+    public async showMultiDiffCurrent(
+        stashNode: StashNode,
+        sourceFile: FileStage,
+        sourceFileSide: DiffSide,
+    ): Promise<void> {
+        const title = `Git Stash #${stashNode.index}: ${stashNode.description}`
+        const multiDiffSourceUri = toGitUri(
+            vscode.Uri.file(stashNode.parent.path),
+            `stash@{${stashNode.index}}`,
+            { scheme: 'git-stash' },
+        )
+
+        const resources = await Promise.all(
+            (stashNode.children ?? []).map((fileNode) => {
+                return this.diffResourceCurrent(fileNode, sourceFile, sourceFileSide)
+            }),
+        )
+
+        vscode.commands.executeCommand('_workbench.openMultiDiffEditor', {
+            multiDiffSourceUri,
+            title,
+            resources,
+        })
+    }
+
+    /**
      * Shows a stashed file diff document.
      *
      * @param fileNode        the node for the stashed file

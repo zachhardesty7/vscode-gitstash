@@ -337,6 +337,30 @@
                 "icon": "$(request-changes)"
             },
             {
+                "command": "gitstash.diffChangesCurrentAll",
+                "title": "Compare All Stash changes ⟷ Current",
+                "category": "GitStash",
+                "icon": "$(git-compare)"
+            },
+            {
+                "command": "gitstash.diffCurrentChangesAll",
+                "title": "Compare All Current ⟷ Stash changes",
+                "category": "GitStash",
+                "icon": "$(git-compare)"
+            },
+            {
+                "command": "gitstash.diffSourceCurrentAll",
+                "title": "Compare All Stash source ⟷ Current",
+                "category": "GitStash",
+                "icon": "$(git-compare)"
+            },
+            {
+                "command": "gitstash.diffCurrentSourceAll",
+                "title": "Compare All Current ⟷ Stash source",
+                "category": "GitStash",
+                "icon": "$(git-compare)"
+            },
+            {
                 "command": "gitstash.pop",
                 "title": "Pop...",
                 "category": "GitStash",
@@ -502,6 +526,22 @@
                 },
                 {
                     "command": "gitstash.openDir",
+                    "when": "false"
+                },
+                {
+                    "command": "gitstash.diffChangesCurrentAll",
+                    "when": "false"
+                },
+                {
+                    "command": "gitstash.diffCurrentChangesAll",
+                    "when": "false"
+                },
+                {
+                    "command": "gitstash.diffSourceCurrentAll",
+                    "when": "false"
+                },
+                {
+                    "command": "gitstash.diffCurrentSourceAll",
                     "when": "false"
                 },
                 {

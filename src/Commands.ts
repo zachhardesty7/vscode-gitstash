@@ -94,6 +94,50 @@ export class Commands {
         .showDiffCurrent(fileNode, FileStage.Parent, DiffSide.Right)
 
     /**
+     * Shows a multi-diff of each file in selected stash, comparing the modified stashed files (left side)
+     * with the current versions (right side).
+     */
+    public diffChangesCurrentAll = async (stashNode: StashNode): Promise<void> => {
+        // required to load the files in the stash
+        await this.nodeContainer.getFiles(stashNode)
+
+        await this.displayer.showMultiDiffCurrent(stashNode, FileStage.Change, DiffSide.Left)
+    }
+
+    /**
+     * Shows a multi-diff of each file in selected stash, comparing the current versions (left side)
+     * with the modified stashed files (right side).
+     */
+    public diffCurrentChangesAll = async (stashNode: StashNode): Promise<void> => {
+        // required to load the files in the stash
+        await this.nodeContainer.getFiles(stashNode)
+
+        await this.displayer.showMultiDiffCurrent(stashNode, FileStage.Change, DiffSide.Right)
+    }
+
+    /**
+     * Shows a multi-diff of each file in selected stash, comparing the modified stashed files' parents (left side)
+     * with the current versions (right side).
+     */
+    public diffSourceCurrentAll = async (stashNode: StashNode): Promise<void> => {
+        // required to load the files in the stash
+        await this.nodeContainer.getFiles(stashNode)
+
+        await this.displayer.showMultiDiffCurrent(stashNode, FileStage.Parent, DiffSide.Left)
+    }
+
+    /**
+     * Shows a multi-diff of each file in selected stash, comparing the current versions (left side)
+     * with the modified stashed files' parents (right side).
+     */
+    public diffCurrentSourceAll = async (stashNode: StashNode): Promise<void> => {
+        // required to load the files in the stash
+        await this.nodeContainer.getFiles(stashNode)
+
+        await this.displayer.showMultiDiffCurrent(stashNode, FileStage.Parent, DiffSide.Right)
+    }
+
+    /**
      * Opens the file inside an editor.
      *
      * @param fileNode the node with the file to open

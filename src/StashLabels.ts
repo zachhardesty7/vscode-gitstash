@@ -216,6 +216,30 @@ export default class StashLabels {
     }
 
     /**
+     * Generates the multi-diff document title name.
+     *
+     * @param stashNode the file node to be shown
+     * @param _diffHint the hint reference to know file origin
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public getMultiDiffTitle(stashNode: StashNode, _diffHint: boolean | undefined): string {
+        return this.config.get<string>('editor.diffTitleFormat')
+            .replace('${filename}', '')
+            .replace('${filepath}', '')
+            .replace('${dateTimeLong}', DateFormat.toFullyReadable(stashNode.date))
+            .replace('${dateTimeSmall}', DateFormat.toDateTimeSmall(stashNode.date))
+            .replace('${dateSmall}', DateFormat.toDateSmall(stashNode.date))
+            .replace('${dateTimeIso}', DateFormat.toDateTimeIso(stashNode.date))
+            .replace('${dateIso}', DateFormat.toDateIso(stashNode.date))
+            .replace('${ago}', DateFormat.ago(stashNode.date))
+            .replace('${stashIndex}', `${stashNode.index}`)
+            .replace('${description}', stashNode.description)
+            .replace('${branch}', stashNode.branch ?? 'n/a')
+            .replace('${type}', '')
+            .replace('${hint}', '')
+    }
+
+    /**
      * Gets the node children count.
      *
      * @param stashNode the source node

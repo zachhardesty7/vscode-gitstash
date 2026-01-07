@@ -31,7 +31,7 @@ export default class {
      * Shows a multi-diff of each file in stash.
      */
     public async showMultiDiff(stashNode: StashNode): Promise<void> {
-        const title = `Git Stash #${stashNode.index}: ${stashNode.description}`
+        const title = this.stashLabels.getMultiDiffTitle(stashNode, false)
         const multiDiffSourceUri = toGitUri(
             vscode.Uri.file(stashNode.parent.path),
             `stash@{${stashNode.index}}`,

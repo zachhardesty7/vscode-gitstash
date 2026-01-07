@@ -678,6 +678,26 @@
                 {
                     "command": "gitstash.view",
                     "when": "view == gitstash.explorer && viewItem == stash",
+                    "group": "inline@-1"
+                },
+                {
+                    "command": "gitstash.diffChangesCurrentAll",
+                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.diffButton == changes-current",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "gitstash.diffCurrentChangesAll",
+                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.diffButton == current-changes",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "gitstash.diffSourceCurrentAll",
+                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.diffButton == source-current",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "gitstash.diffCurrentSourceAll",
+                    "when": "view == gitstash.explorer && viewItem == stash && config.gitstash.explorer.items.stash.diffButton == current-source",
                     "group": "inline@0"
                 },
                 {

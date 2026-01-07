@@ -120,7 +120,15 @@ export default class {
             sourceFileSide,
         )
 
-        this.displayDiff(diffResource, fileNode, false)
+        if (!diffResource.originalUri && diffResource.modifiedUri) { // 'Added' & 'Untracked'
+            this.displayFile(diffResource.modifiedUri, fileNode)
+        }
+        else if (diffResource.originalUri && !diffResource.modifiedUri) { // 'Deleted' case
+            this.displayFile(diffResource.originalUri, fileNode)
+        }
+        else {
+            this.displayDiff(diffResource, fileNode, false)
+        }
     }
 
     private async diffResource(fileNode: FileNode): Promise<DiffResource> {
@@ -158,14 +166,6 @@ export default class {
             : await this.uriGenerator.createForDiff(fileNode)
 
         const current = this.uriGenerator.createForNodePath(fileNode)
-
-        if (!current) {
-            const name = fileNode.isRenamed
-                ? fileNode.oldRelativePath
-                : fileNode.relativePath
-
-            vscode.window.showWarningMessage(`File ${name} not found.`)
-        }
 
         return sourceFileSide === DiffSide.Left
             ? { originalUri: stashed, modifiedUri: current }

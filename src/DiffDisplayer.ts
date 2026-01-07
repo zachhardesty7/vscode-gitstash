@@ -82,7 +82,7 @@ export default class {
         sourceFile: FileStage,
         sourceFileSide: DiffSide,
     ): Promise<void> {
-        const title = `Git Stash #${stashNode.index}: ${stashNode.description}`
+        const title = this.stashLabels.getMultiDiffTitle(stashNode, false)
         const multiDiffSourceUri = toGitUri(
             vscode.Uri.file(stashNode.parent.path),
             `stash@{${stashNode.index}}`,
